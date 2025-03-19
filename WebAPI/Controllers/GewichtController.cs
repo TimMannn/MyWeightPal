@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace WebAPI.Controllers;
 
-public class GewichtController
+[ApiController]
+[Route("api/[controller]")]
+public class GewichtController : ControllerBase
 {
     
 }
