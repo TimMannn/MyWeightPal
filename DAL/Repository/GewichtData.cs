@@ -1,27 +1,51 @@
-﻿using BLL;
+﻿using System.Text.Json;
+using BLL;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repository;
 
 public class GewichtData :IGewichtData
 {
+    private readonly AppDbContext _context;
+
+    public GewichtData(AppDbContext context)
+    {
+        _context = context;
+    }
+    
     public async Task<List<GewichtDetails>> GetGewicht()
     {
-        return new List<GewichtDetails>();
+        return await _context.Gewichten
+            .Select(gm => new GewichtDetails(gm.id, gm.gewicht, gm.datumToegevoegd))
+            .ToListAsync();
     }
 
-    public async Task SetGewicht(string gewicht)
+    public async Task SetGewicht(double gewicht)
     {
-        return;
+        var Gewicht = new DAL.Models.GewichtModel { gewicht = gewicht, datumToegevoegd = DateTime.Now };
+        _context.Gewichten.Add(Gewicht);
+        await _context.SaveChangesAsync();
     }
     
-    public async Task EditGewicht(string gewicht)
+    public async Task EditGewicht(int idGewicht, double gewicht)
     {
-        return;
+        var Gewicht = await _context.Gewichten.FirstOrDefaultAsync(gm => gm.id == idGewicht);
+        if (Gewicht != null)
+        {
+            Gewicht.gewicht = gewicht;
+            _context.Gewichten.Update(Gewicht);
+            await _context.SaveChangesAsync();
+        }
     }
     
-    public async Task DeleteGewicht(int id)
+    public async Task DeleteGewicht(int idGewicht)
     {
-        return;
+        var Gewicht = await _context.Gewichten.FindAsync(idGewicht);
+        if (Gewicht != null)
+        {
+            _context.Gewichten.Remove(Gewicht);
+            await _context.SaveChangesAsync();
+        }
     }
 
     
@@ -30,14 +54,13 @@ public class GewichtData :IGewichtData
     {
         
     }
-    */
     
-    public async Task SetDoelGewicht(string doelgewicht)
+    public async Task SetDoelGewicht(double doelgewicht)
     {
         return;
     }
 
-    public async Task EditDoelGewicht(string doelgewicht)
+    public async Task EditDoelGewicht(double doelgewicht)
     {
         return;
     }
@@ -47,4 +70,5 @@ public class GewichtData :IGewichtData
     {
         
     }
+    */
 }

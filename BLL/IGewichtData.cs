@@ -3,12 +3,14 @@ namespace BLL;
 public interface IGewichtData
 {
     Task<List<GewichtDetails>> GetGewicht();
-    Task SetGewicht(string gewicht);
-    Task EditGewicht(string gewicht);
-    Task DeleteGewicht(int id);
+    Task SetGewicht(double gewicht);
+    Task EditGewicht(int idGewicht, double gewicht);
+    Task DeleteGewicht(int idGewicht);
 
-    //Task<DoelGewichtDetails> GetDoelGewicht();
-    Task SetDoelGewicht(string gewicht);
-    Task EditDoelGewicht(string gewicht);
+    /*
+    Task<DoelGewichtDetails> GetDoelGewicht();
+    Task SetDoelGewicht(double gewicht);
+    Task EditDoelGewicht(double gewicht);
     Task DeleteDoelGewicht(int id);
+    */
 }

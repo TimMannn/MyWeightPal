@@ -2,24 +2,31 @@
 
 public class GewichtService
 {
-    public async Task<List<GewichtDetails>> GetGewicht()
-    {
-        return new List<GewichtDetails>();
-    }
+    private readonly IGewichtData _gewichtData;
 
-    public async Task SetGewicht(string gewicht)
+    public GewichtService(IGewichtData gewichtdata)
     {
-        return;
+        _gewichtData = gewichtdata;
     }
     
-    public async Task EditGewicht(string gewicht)
+    public async Task<List<GewichtDetails>> GetGewicht()
     {
-        return;
+        return await _gewichtData.GetGewicht();
+    }
+
+    public async Task SetGewicht(double gewicht)
+    {
+        await _gewichtData.SetGewicht(gewicht);
+    }
+    
+    public async Task EditGewicht(int idGewicht, double gewicht)
+    {
+        await _gewichtData.EditGewicht(idGewicht, gewicht);
     }
     
     public async Task DeleteGewicht(int idGewicht)
     {
-        return;
+        await _gewichtData.DeleteGewicht(idGewicht);
     }
 
     
@@ -27,15 +34,14 @@ public class GewichtService
     public async Task<DoelGewichtDetails> GetDoelGewicht()
     {
         return new DoelGewichtDetails();
-    }
-    */
+    }  
     
-    public async Task SetDoelGewicht(string doelgewicht)
+    public async Task SetDoelGewicht(double doelgewicht)
     {
         return;
     }
 
-    public async Task EditDoelGewicht(string doelgewicht)
+    public async Task EditDoelGewicht(double doelgewicht)
     {
         return;
     }
@@ -45,4 +51,5 @@ public class GewichtService
     {
         return;
     }
+    */
 }
