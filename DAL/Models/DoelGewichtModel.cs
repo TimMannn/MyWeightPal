@@ -13,5 +13,5 @@ public class DoelGewichtModel
     public double doelgewicht { get; set; }
 
     [Required]
-    public DateTime datumToegevoegd { get; set; } = DateTime.Now;
+    public DateTime datumToegevoegd { get; set; } = DateTime.Now.Date;
 }

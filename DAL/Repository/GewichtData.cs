@@ -22,7 +22,7 @@ public class GewichtData :IGewichtData
 
     public async Task SetGewicht(double gewicht)
     {
-        var Gewicht = new DAL.Models.GewichtModel { gewicht = gewicht, datumToegevoegd = DateTime.Now };
+        var Gewicht = new DAL.Models.GewichtModel { gewicht = gewicht, datumToegevoegd = DateTime.Now.Date };
         _context.Gewichten.Add(Gewicht);
         await _context.SaveChangesAsync();
     }

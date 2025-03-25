@@ -13,5 +13,5 @@ public class GewichtModel
     public double gewicht { get; set; }
 
     [Required]
-    public DateTime datumToegevoegd { get; set; } = DateTime.Now;
+    public DateTime datumToegevoegd { get; set; } = DateTime.Now.Date;
 }
