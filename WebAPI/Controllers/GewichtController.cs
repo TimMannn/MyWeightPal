@@ -15,7 +15,7 @@ public class GewichtController : ControllerBase
         _gewichtService = gewichtservice;
     }
     
-    [HttpGet]
+    [HttpGet("gewicht")] 
     public async Task<ActionResult<IEnumerable<DAL.Models.GewichtModel>>> GetGewicht()
     {
         try
@@ -30,7 +30,7 @@ public class GewichtController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("gewicht")]
     public async Task<ActionResult<DAL.Models.GewichtModel>> SetGewicht([FromBody] AddGewichtModel model)
     {
         if (!ModelState.IsValid)
@@ -46,10 +46,10 @@ public class GewichtController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("gewicht{id}")]
     public async Task<ActionResult<DAL.Models.GewichtModel>> EditGewicht(int id, [FromBody] EditGewichtModel model)
     {
-        if (id != model.id)
+        if (id != model.Id)
         {
             return BadRequest("EditGewichtModel id mismatch in GewichtController");
         }
@@ -63,14 +63,76 @@ public class GewichtController : ControllerBase
             });
         }
 
-        await _gewichtService.EditGewicht(model.id, model.Gewicht);
+        await _gewichtService.EditGewicht(model.Id, model.Gewicht);
         return Ok();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("gewicht{id}")]
     public async Task<ActionResult> DeleteGewicht(int id)
     {
         await _gewichtService.DeleteGewicht(id);
+        return Ok();
+    }
+    
+    
+    
+    
+    [HttpGet("doelgewicht")]
+    public async Task<ActionResult<IEnumerable<DAL.Models.DoelGewichtModel>>> GetDoelGewicht()
+    {
+        try
+        {
+            var DoelGewicht = await _gewichtService.GetDoelGewicht();
+            return Ok(DoelGewicht);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting workouts: {ex.Message}");
+            return StatusCode(500, "internal server error");
+        }
+    }
+
+    [HttpPost("doelgewicht")]
+    public async Task<ActionResult<DAL.Models.DoelGewichtModel>> SetGewicht([FromBody] AddDoelGewichtModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                message = "Ongeldige invoer.",
+                errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
+            });
+        }
+
+        await _gewichtService.SetDoelGewicht(model.Doelgewicht);
+        return Ok();
+    }
+
+    [HttpPut("doelgewicht{id}")]
+    public async Task<ActionResult<DAL.Models.DoelGewichtModel>> EditDoelGewicht(int id, [FromBody] EditDoelGewichtModel model)
+    {
+        if (id != model.Id)
+        {
+            return BadRequest("EditDoelGewichtModel id mismatch in GewichtController");
+        }
+        
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                message = "Ongeldige invoer.",
+                errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
+            });
+        }
+
+        await _gewichtService.EditDoelGewicht(model.Id, model.Doelgewicht);
+        return Ok();
+    }
+
+    [HttpDelete("doelgewicht{id}")]
+    public async Task<ActionResult> DeleteDoelGewicht(int id)
+    {
+        await _gewichtService.DeleteDoelGewicht(id);
         return Ok();
     }
 }

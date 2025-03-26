@@ -49,26 +49,39 @@ public class GewichtData :IGewichtData
     }
 
     
-/*
-    public async Task<DoelGewichtDetails> GetDoelGewicht()
+    public async Task<List<DoelGewichtDetails>> GetDoelGewicht()
     {
-        
+        return await _context.DoelGewichten
+            .Select(dgm => new DoelGewichtDetails(dgm.id, dgm.doelgewicht, dgm.datumToegevoegd))
+            .ToListAsync();
     }
     
     public async Task SetDoelGewicht(double doelgewicht)
     {
-        return;
+        var doelGewicht = new DAL.Models.DoelGewichtModel { doelgewicht = doelgewicht, datumToegevoegd = DateTime.Now.Date };
+        _context.DoelGewichten.Add(doelGewicht);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task EditDoelGewicht(double doelgewicht)
+    public async Task EditDoelGewicht(int idDoelGewicht,double doelgewicht)
     {
-        return;
+        var DoelGewicht = await _context.DoelGewichten.FirstOrDefaultAsync(dgm => dgm.id == idDoelGewicht);
+        if (DoelGewicht != null)
+        {
+            DoelGewicht.doelgewicht = doelgewicht;
+            _context.DoelGewichten.Update(DoelGewicht);
+            await _context.SaveChangesAsync();
+        }
     }
-    
 
-    public async Task DeleteDoelGewicht(int id)
+
+    public async Task DeleteDoelGewicht(int idDoelGewicht)
     {
-        
+        var DoelGewicht = await _context.DoelGewichten.FindAsync(idDoelGewicht);
+        if (DoelGewicht != null)
+        {
+            _context.DoelGewichten.Remove(DoelGewicht);
+            await _context.SaveChangesAsync();
+        }
     }
-    */
 }
