@@ -37,6 +37,7 @@ button {
     margin: 0.2rem;
     text-align: center;
     border: none;
+    outline: none;
     border-radius: 4px;
     cursor: pointer;
     color: #fff;
@@ -46,6 +47,7 @@ button {
 
 button.gewichttoevoegen-btn {
     background-color: #3399ff;
+    border: none;
     width: 185px;
     margin-top: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -56,13 +58,32 @@ button.gewichttoevoegen-btn:hover {
     background-color: #0056b3;
 }
 
+button.doelgewichttoevoegen-btn {
+    background-color: #33cc66;
+    border: none;
+    width: 215px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    float: right;
+}
+
+button.doelgewichttoevoegen-btn:hover {
+    background-color: #006633;
+}
+
 button.edit-btn {
     background-color: #3399ff;
+    border: none;
     width: 40px;
     margin: 1px;
     height: 40px;
     vertical-align: center;
     text-align: center;
+}
+
+.custom-table-container {
+    max-height: 352px;
+    overflow-y: auto;
 }
 
 table.custom-table {

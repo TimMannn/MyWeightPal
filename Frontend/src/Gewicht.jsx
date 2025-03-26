@@ -9,20 +9,19 @@ import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 
-
-
-
 const Gewicht = () => {
     
     const [data, setData] = useState([]);
+    const [data2, setData2] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         getData();
+        getData2()
     }, []);
 
     const getData = () => {
-        axios.get(`https://localhost:7209/api/Gewicht`)
+        axios.get(`https://localhost:7209/api/Gewicht/gewicht`)
             .then((result) => {
                 console.log(result.data);
                 setData(result.data);
@@ -30,6 +29,18 @@ const Gewicht = () => {
             .catch((error) => {
                 console.error("Error met ophalen van gewicht:", error);
                 toast.error("Gewicht ophalen mislukt!");
+            });
+    };
+
+    const getData2 = () => {
+        axios.get("https://localhost:7209/api/Gewicht/doelgewicht")
+            .then((result) => {
+                console.log(result.data);
+                setData2(result.data);
+            })
+            .catch((error) => {
+                console.error("Error met ophalen van doelgewicht:", error);
+                toast.error("Doelgewicht ophalen mislukt!");
             });
     };
 
@@ -50,7 +61,7 @@ const Gewicht = () => {
                 zoom: { enabled: true }
             },
             xaxis: {
-                type: "category", // Datum als categorie, niet als timestamp
+                type: "category",
                 title: { text: "Datum" }
             },
             yaxis: {
@@ -71,11 +82,14 @@ const Gewicht = () => {
                 </Container>
             </Navbar>
             <Container fluid>
-                <row className="gewichttoevoegen">
+                <div className="gewichttoevoegen">
                     <Button className="btn gewichttoevoegen-btn" >
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
-                </row>
+                    <Button className="btn doelgewichttoevoegen-btn" >
+                        Doelgewicht toevoegen <IoIosAddCircle />
+                    </Button>
+                </div>
             </Container>
             <br />
 
@@ -84,7 +98,7 @@ const Gewicht = () => {
                 <ReactApexChart options={chartData.options} series={chartData.series} type="area" height={350} />
             </Container>
             
-            <Container>
+            <Container className="custom-table-container">
                 <Table striped bordered hover className="custom-table">
                     <thead className="header-row">
                     <tr>
