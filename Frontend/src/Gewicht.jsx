@@ -5,6 +5,7 @@ import axios from "axios";
 import { Navbar, Container, Nav, Button, Col, Modal, Table } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 
@@ -32,6 +33,35 @@ const Gewicht = () => {
             });
     };
 
+    const chartData = {
+        series: [
+            {
+                name: "Gewicht",
+                data: data.map(item => ({
+                    x: new Date(item.datum).toISOString().split("T")[0],
+                    y: item.gewicht
+                }))
+            }
+        ],
+        options: {
+            chart: {
+                type: "area",
+                height: 350,
+                zoom: { enabled: true }
+            },
+            xaxis: {
+                type: "category", // Datum als categorie, niet als timestamp
+                title: { text: "Datum" }
+            },
+            yaxis: {
+                title: { text: "Gewicht (kg)" }
+            },
+            tooltip: {
+                x: { format: "yyyy-MM-dd" }
+            }
+        }
+    };
+
     return (
         <Fragment>
             <ToastContainer />
@@ -48,6 +78,12 @@ const Gewicht = () => {
                 </row>
             </Container>
             <br />
+
+            <Container fluid>
+                <br /><br />
+                <ReactApexChart options={chartData.options} series={chartData.series} type="area" height={350} />
+            </Container>
+            
             <Container>
                 <Table striped bordered hover className="custom-table">
                     <thead className="header-row">
@@ -59,7 +95,10 @@ const Gewicht = () => {
                     </thead>
                     <tbody>
                     {data.length > 0 ? (
-                        data.map((item, index) => (
+                        data
+                            .slice()
+                            .sort((a, b) => new Date(b.datum) - new Date(a.datum))
+                            .map((item, index) => (
                             <tr key={index}>
                                 <td>{item.gewicht }</td>
                                 <td>{new Date(item.datum).toISOString().split("T")[0]}</td>
