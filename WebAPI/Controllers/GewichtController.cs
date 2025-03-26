@@ -82,14 +82,8 @@ public class GewichtController : ControllerBase
     {
         try
         {
-            var huidigeDatum = DateTime.Now.Date.ToString("yyyy-MM-dd");
             var DoelGewicht = await _gewichtService.GetDoelGewicht();
-            var response = new
-            {
-                DoelGewicht = DoelGewicht,
-                HuidigeDatum = huidigeDatum
-            };
-            return Ok(response);
+            return Ok(DoelGewicht);
         }
         catch (Exception ex)
         {

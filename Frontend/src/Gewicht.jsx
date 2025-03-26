@@ -12,18 +12,18 @@ import { IoIosAddCircle } from "react-icons/io";
 const Gewicht = () => {
     
     const [data, setData] = useState([]);
-    const [data2, setData2] = useState([]);
+    const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
+        getDataDoelGewicht();
         getData();
-        getData2()
     }, []);
 
     const getData = () => {
         axios.get(`https://localhost:7209/api/Gewicht/gewicht`)
             .then((result) => {
-                console.log(result.data);
+                console.log("Data responds: ", result.data);
                 setData(result.data);
             })
             .catch((error) => {
@@ -32,18 +32,18 @@ const Gewicht = () => {
             });
     };
 
-    const getData2 = () => {
+    const getDataDoelGewicht = () => {
         axios.get("https://localhost:7209/api/Gewicht/doelgewicht")
             .then((result) => {
-                console.log(result.data);
-                setData2(result.data);
+                console.log("DataDoelGewicht responds: ", result.data);
+                setDataDoelGewicht(result.data);
             })
             .catch((error) => {
                 console.error("Error met ophalen van doelgewicht:", error);
                 toast.error("Doelgewicht ophalen mislukt!");
             });
     };
-
+    
     const chartData = {
         series: [
             {
@@ -65,13 +65,34 @@ const Gewicht = () => {
                 title: { text: "Datum" }
             },
             yaxis: {
-                title: { text: "Gewicht (kg)" }
+                title: { text: "Gewicht (kg)" },
+                min: Math.min(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : Infinity) - 0.5,
+                max: Math.max(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : -Infinity) + 0.5
             },
             tooltip: {
                 x: { format: "yyyy-MM-dd" }
+            },
+            annotations: {
+                yaxis: [
+                    {
+                        y: dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : null,
+                        borderColor: '#33cc66',
+                        strokeDashArray: 0,
+                        strokeWidth: 4,
+                        label: {
+                            borderColor: '#33cc66',
+                            style: {
+                                color: '#fff',
+                                background: '#33cc66'
+                            },
+                            text: 'Doelgewicht'
+                        }
+                    }
+                ]
             }
         }
     };
+
 
     return (
         <Fragment>
@@ -94,7 +115,13 @@ const Gewicht = () => {
             <br />
 
             <Container fluid>
-                <br /><br />
+                <br />
+                <div>
+                    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doelgewicht: {dataDoelGewicht.length > 0
+                        ? `${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg`
+                        : "Er is nog geen doelgewicht ingesteld"}
+                    </h3>
+                </div>
                 <ReactApexChart options={chartData.options} series={chartData.series} type="area" height={350} />
             </Container>
             
@@ -114,7 +141,7 @@ const Gewicht = () => {
                             .sort((a, b) => new Date(b.datum) - new Date(a.datum))
                             .map((item, index) => (
                             <tr key={index}>
-                                <td>{item.gewicht }</td>
+                                <td>{item.gewicht } kg</td>
                                 <td>{new Date(item.datum).toISOString().split("T")[0]}</td>
                                 <td>
                                     <Button
