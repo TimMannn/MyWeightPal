@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Gewicht.css";
 import axios from "axios";
-import { Navbar, Container, Nav, Button, Col, Modal, Table } from "react-bootstrap";
+import { Navbar, Container, Nav, Button, Col, Modal, Table, Row } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactApexChart from "react-apexcharts";
@@ -14,6 +14,13 @@ const Gewicht = () => {
     const [data, setData] = useState([]);
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
     const navigate = useNavigate();
+
+    const [Gewicht, setGewicht] = useState("");
+    const [editGewicht, setEditGewicht] = useState("");
+
+    const [showAdd, setShowAdd] = useState(false);
+    const handleCloseAdd = () => setShowAdd(false);
+    const handleShowAdd = () => setShowAdd(true);
 
     useEffect(() => {
         getDataDoelGewicht();
@@ -41,6 +48,35 @@ const Gewicht = () => {
             .catch((error) => {
                 console.error("Error met ophalen van doelgewicht:", error);
                 toast.error("Doelgewicht ophalen mislukt!");
+            });
+    };
+
+    const handleSave = () => {
+        const data = {
+            gewicht : Gewicht
+        };
+
+        const clear = () => {
+            setGewicht("");
+        };
+
+        axios
+            .post("https://localhost:7209/api/Gewicht/gewicht", data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getData();
+                    clear();
+                    handleCloseAdd();
+                    toast.success("Gewicht toegevoegd!");
+                } else {
+                    toast.error(`Gewicht toevoegen mislukt: ${response.data.message}`);
+                }
+            })
+            .catch((error) => {
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Gewicht toevoegen mislukt!",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
             });
     };
     
@@ -85,7 +121,7 @@ const Gewicht = () => {
                                 color: '#fff',
                                 background: '#33cc66'
                             },
-                            text: 'Doelgewicht'
+                            text: dataDoelGewicht.length > 0 ? `Doel: ${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg` : 'Geen doelgewicht ingesteld'
                         }
                     }
                 ]
@@ -104,7 +140,7 @@ const Gewicht = () => {
             </Navbar>
             <Container fluid>
                 <div className="gewichttoevoegen">
-                    <Button className="btn gewichttoevoegen-btn" >
+                    <Button className="btn gewichttoevoegen-btn" onClick={handleShowAdd}>
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
                     <Button className="btn doelgewichttoevoegen-btn" >
@@ -165,6 +201,46 @@ const Gewicht = () => {
                     </tbody>
                 </Table>
             </Container>
+
+            
+            {/*pop-up gewicht toevoegen*/}
+            
+            <Modal show={showAdd} onHide={handleCloseAdd}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Nieuw gewicht toevoegen.</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <Col>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Voer je gewicht in."
+                                value={Gewicht}
+                                onChange={(e) => {
+                                    const waarde = e.target.value;
+                                    if (waarde >= 0 && waarde <= 300) {
+                                        setGewicht(waarde);
+                                    } else {
+                                        toast.error("Voer een gewicht in tussen 0 en 300!");
+                                    }
+                                }}
+                                min="0"
+                                max="300"
+                                required
+                            />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer className="menu-footer">
+                    <Button className="btn menu-btn" onClick={handleCloseAdd}>
+                        Cancel
+                    </Button>
+                    <Button className="btn menu-btn" onClick={handleSave}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Fragment>
     );
 };
