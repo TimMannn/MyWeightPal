@@ -116,6 +116,21 @@ const Gewicht = () => {
         });
     };
 
+    const handleDuplicateCheck = () => {
+        const today = new Date().toLocaleDateString("sv-SE");
+        
+        const existingWeight = data.find(item => new Date(item.datum).toLocaleDateString("sv-SE") === today);
+
+        if (existingWeight) {
+            setSelectedItem(existingWeight);
+            setEditGewicht(existingWeight.gewicht);
+            setEditID(existingWeight.id);
+            handleShowEdit();
+        } else {
+            handleShowAdd();
+        }
+    };
+    
     const handleSave = () => {
         const data = {
             gewicht: Gewicht,
@@ -229,7 +244,7 @@ const Gewicht = () => {
             </Navbar>
             <Container fluid>
                 <div className="gewichttoevoegen">
-                    <Button className="btn gewichttoevoegen-btn" onClick={handleShowAdd}>
+                    <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
                     <Button className="btn doelgewichttoevoegen-btn">
