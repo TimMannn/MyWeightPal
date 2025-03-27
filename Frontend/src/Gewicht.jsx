@@ -9,6 +9,10 @@ import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
+import ReactConfetti from "react-confetti";
+import Confetti from './Confetti';
+
+
 
 
 
@@ -29,8 +33,9 @@ const Gewicht = () => {
 
     const handleCloseEdit = () => setShowEdit(false);
     const handleShowEdit = () => setShowEdit(true);
-    
-    
+    const [confettiActive, setConfettiActive] = useState(false);
+
+
 
     useEffect(() => {
         getDataDoelGewicht();
@@ -130,11 +135,11 @@ const Gewicht = () => {
             handleShowAdd();
         }
     };
-    
+
     const handleSave = () => {
         const data = {
             gewicht: Gewicht,
-            datum: new Date().toLocaleDateString("sv-SE") // Zorgt ervoor dat de datum juist wordt opgeslagen
+            datum: new Date().toLocaleDateString("sv-SE")
         };
 
         axios
@@ -145,6 +150,14 @@ const Gewicht = () => {
                     setGewicht("");
                     handleCloseAdd();
                     toast.success("Gewicht toegevoegd!");
+                    
+                    if (
+                        dataDoelGewicht.length > 0 &&
+                        parseFloat(Gewicht) >= parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht)
+                    ) {
+                        setConfettiActive(true);
+                        setTimeout(() => setConfettiActive(false), 10000); // Confetti stopt na 10 seconden
+                    }
                 } else {
                     toast.error(`Gewicht toevoegen mislukt: ${response.data.message}`);
                 }
@@ -156,6 +169,7 @@ const Gewicht = () => {
                 errorMessages.forEach((msg) => toast.error(msg));
             });
     };
+
 
     const handleEdit = (ID) => {
         handleShowEdit();
@@ -173,15 +187,9 @@ const Gewicht = () => {
     };
 
     const handleUpdate = () => {
-        
         const data = {
             id: editID,
             gewicht: editGewicht,
-        };
-
-        const clear = () => {
-            setEditGewicht("");
-            setEditID("");
         };
 
         if (editGewicht.trim() === "") {
@@ -194,9 +202,18 @@ const Gewicht = () => {
             .then((response) => {
                 if (response.status === 200) {
                     getData();
-                    clear();
+                    setEditGewicht("");
+                    setEditID("");
                     handleCloseEdit();
                     toast.success("Gewicht is succesvol bewerkt!");
+                    
+                    if (
+                        dataDoelGewicht.length > 0 &&
+                        parseFloat(editGewicht) >= parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht)
+                    ) {
+                        setConfettiActive(true);
+                        setTimeout(() => setConfettiActive(false), 10000); // Confetti stopt na 10 seconden
+                    }
                 } else {
                     toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
                 }
@@ -209,6 +226,7 @@ const Gewicht = () => {
                 errorMessages.forEach((msg) => toast.error(msg));
             });
     };
+
 
     const handleDelete = (ID) => {
         const clear = () => {
@@ -242,6 +260,9 @@ const Gewicht = () => {
                     <Navbar.Brand href="#home">MyWeightPal</Navbar.Brand>
                 </Container>
             </Navbar>
+            
+            <Confetti show={confettiActive} />
+            
             <Container fluid>
                 <div className="gewichttoevoegen">
                     <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
