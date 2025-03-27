@@ -2,30 +2,44 @@ import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Gewicht.css";
 import axios from "axios";
-import { Navbar, Container, Nav, Button, Col, Modal, Table, Row } from "react-bootstrap";
+import { Navbar, Container, Button, Table, Modal, Row, Col } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+
+
 
 const Gewicht = () => {
-    
     const [data, setData] = useState([]);
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
+    const [chartData, setChartData] = useState({ series: [], options: {} });
     const navigate = useNavigate();
-
     const [Gewicht, setGewicht] = useState("");
-    const [editGewicht, setEditGewicht] = useState("");
-
     const [showAdd, setShowAdd] = useState(false);
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => setShowAdd(true);
+
+    const [editID, setEditID] = useState("");
+    const [editGewicht, setEditGewicht] = useState("");
+    const [showEdit, setShowEdit] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const handleCloseEdit = () => setShowEdit(false);
+    const handleShowEdit = () => setShowEdit(true);
+    
+    
 
     useEffect(() => {
         getDataDoelGewicht();
         getData();
     }, []);
+
+    useEffect(() => {
+        updateChartData();
+    }, [data, dataDoelGewicht]);
 
     const getData = () => {
         axios.get(`https://localhost:7209/api/Gewicht/gewicht`)
@@ -51,13 +65,61 @@ const Gewicht = () => {
             });
     };
 
+    const updateChartData = () => {
+        setChartData({
+            series: [
+                {
+                    name: "Gewicht",
+                    data: data.map(item => ({
+                        x: new Date(item.datum).toLocaleDateString("sv-SE"), // Oplossing voor UTC probleem
+                        y: item.gewicht
+                    }))
+                }
+            ],
+            options: {
+                chart: {
+                    type: "area",
+                    height: 350,
+                    zoom: { enabled: true }
+                },
+                xaxis: {
+                    type: "category",
+                    title: { text: "Datum" }
+                },
+                yaxis: {
+                    title: { text: "Gewicht (kg)" },
+                    min: Math.min(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : Infinity) - 0.5,
+                    max: Math.max(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : -Infinity) + 0.5
+                },
+                tooltip: {
+                    x: { format: "yyyy-MM-dd" }
+                },
+                annotations: {
+                    yaxis: [
+                        {
+                            y: dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : null,
+                            borderColor: '#33cc66',
+                            strokeDashArray: 0,
+                            strokeWidth: 4,
+                            label: {
+                                borderColor: '#33cc66',
+                                style: {
+                                    color: '#fff',
+                                    background: '#33cc66'
+                                },
+                                text: dataDoelGewicht.length > 0 ? `Doel: ${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg` : 'Geen doelgewicht ingesteld'
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    };
+
     const handleSave = () => {
         const data = {
-            gewicht : Gewicht
-        };
-
-        const clear = () => {
-            setGewicht("");
+            gewicht: Gewicht,
+            datum: new Date().toLocaleDateString("sv-SE") // Zorgt ervoor dat de datum juist wordt opgeslagen
         };
 
         axios
@@ -65,7 +127,7 @@ const Gewicht = () => {
             .then((response) => {
                 if (response.status === 200) {
                     getData();
-                    clear();
+                    setGewicht("");
                     handleCloseAdd();
                     toast.success("Gewicht toegevoegd!");
                 } else {
@@ -79,56 +141,83 @@ const Gewicht = () => {
                 errorMessages.forEach((msg) => toast.error(msg));
             });
     };
-    
-    const chartData = {
-        series: [
-            {
-                name: "Gewicht",
-                data: data.map(item => ({
-                    x: new Date(item.datum).toISOString().split("T")[0],
-                    y: item.gewicht
-                }))
-            }
-        ],
-        options: {
-            chart: {
-                type: "area",
-                height: 350,
-                zoom: { enabled: true }
-            },
-            xaxis: {
-                type: "category",
-                title: { text: "Datum" }
-            },
-            yaxis: {
-                title: { text: "Gewicht (kg)" },
-                min: Math.min(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : Infinity) - 0.5,
-                max: Math.max(...data.map(d => d.gewicht), dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : -Infinity) + 0.5
-            },
-            tooltip: {
-                x: { format: "yyyy-MM-dd" }
-            },
-            annotations: {
-                yaxis: [
-                    {
-                        y: dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : null,
-                        borderColor: '#33cc66',
-                        strokeDashArray: 0,
-                        strokeWidth: 4,
-                        label: {
-                            borderColor: '#33cc66',
-                            style: {
-                                color: '#fff',
-                                background: '#33cc66'
-                            },
-                            text: dataDoelGewicht.length > 0 ? `Doel: ${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg` : 'Geen doelgewicht ingesteld'
-                        }
-                    }
-                ]
-            }
-        }
+
+    const handleEdit = (ID) => {
+        handleShowEdit();
+        axios
+            .get(`https://localhost:7209/api/Gewicht/gewicht${ID}`)
+            .then((result) => {
+                console.log(result.data);
+                setEditGewicht(result.data.gewicht);
+                setEditID(ID);
+            })
+            .catch((error) => {
+                console.error("Error bij het ophalen van gewicht:", error);
+                toast.error("Gewicht niet gevonden!");
+            })
     };
 
+    const handleUpdate = () => {
+        
+        const data = {
+            id: editID,
+            gewicht: editGewicht,
+        };
+
+        const clear = () => {
+            setEditGewicht("");
+            setEditID("");
+        };
+
+        if (editGewicht.trim() === "") {
+            toast.error("Voer een nieuw gewicht in!");
+            return;
+        }
+
+        axios
+            .put(`https://localhost:7209/api/Gewicht/gewicht${editID}`, data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getData();
+                    clear();
+                    handleCloseEdit();
+                    toast.success("Gewicht is succesvol bewerkt!");
+                } else {
+                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error("Error details:", error.response);
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Error updating gewicht",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
+            });
+    };
+
+    const handleDelete = (ID) => {
+        const clear = () => {
+            setEditGewicht("");
+            setEditID("");
+        };
+        
+        if (window.confirm(`Weet je zeker dat je het gewicht wilt verwijderen?`)) {
+            axios
+                .delete(`https://localhost:7209/api/Gewicht/gewicht${ID}`)
+                .then((result) => {
+                    if (result.status === 200) {
+                        clear();
+                        handleCloseEdit();
+                        toast.success("Gewicht is succesvol verwijderd!");
+                        getData();
+                    }
+                })
+                .catch((error) => {
+                    toast.error("Gewicht verwijderen mislukt!");
+                    console.log(error);
+                });
+        }
+    };
 
     return (
         <Fragment>
@@ -143,7 +232,7 @@ const Gewicht = () => {
                     <Button className="btn gewichttoevoegen-btn" onClick={handleShowAdd}>
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
-                    <Button className="btn doelgewichttoevoegen-btn" >
+                    <Button className="btn doelgewichttoevoegen-btn">
                         Doelgewicht toevoegen <IoIosAddCircle />
                     </Button>
                 </div>
@@ -158,9 +247,15 @@ const Gewicht = () => {
                         : "Er is nog geen doelgewicht ingesteld"}
                     </h3>
                 </div>
-                <ReactApexChart options={chartData.options} series={chartData.series} type="area" height={350} />
+                <ReactApexChart
+                    key={chartData.series.length}
+                    options={chartData.options}
+                    series={chartData.series}
+                    type="area"
+                    height={350}
+                />
             </Container>
-            
+
             <Container className="custom-table-container">
                 <Table striped bordered hover className="custom-table">
                     <thead className="header-row">
@@ -176,23 +271,19 @@ const Gewicht = () => {
                             .slice()
                             .sort((a, b) => new Date(b.datum) - new Date(a.datum))
                             .map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.gewicht } kg</td>
-                                <td>{new Date(item.datum).toISOString().split("T")[0]}</td>
-                                <td>
-                                    <Button
-                                        className="btn edit-btn"
-                                        id="edit-button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            //handleEdit(item.id);
-                                        }}
-                                    >
-                                        <FaPen size={16} />
-                                    </Button>
-                                </td>
-                            </tr>
-                        ))
+                                <tr key={index}>
+                                    <td>{item.gewicht} kg</td>
+                                    <td>{new Date(item.datum).toLocaleDateString("nl-NL")}</td> {/* Oplossing voor juiste datumweergave */}
+                                    <td>
+                                        <Button className="btn edit-btn" onClick={() => {
+                                            setSelectedItem(item);
+                                            handleEdit(item.id);
+                                        }}>
+                                            <FaPen size={16} />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
                     ) : (
                         <tr>
                             <td colSpan="3">Er is nog geen gewicht toegevoegd.</td>
@@ -202,9 +293,7 @@ const Gewicht = () => {
                 </Table>
             </Container>
 
-            
-            {/*pop-up gewicht toevoegen*/}
-            
+            {/* Pop-up gewicht toevoegen */}
             <Modal show={showAdd} onHide={handleCloseAdd}>
                 <Modal.Header closeButton>
                     <Modal.Title>Nieuw gewicht toevoegen.</Modal.Title>
@@ -217,14 +306,7 @@ const Gewicht = () => {
                                 className="form-control"
                                 placeholder="Voer je gewicht in."
                                 value={Gewicht}
-                                onChange={(e) => {
-                                    const waarde = e.target.value;
-                                    if (waarde >= 0 && waarde <= 300) {
-                                        setGewicht(waarde);
-                                    } else {
-                                        toast.error("Voer een gewicht in tussen 0 en 300!");
-                                    }
-                                }}
+                                onChange={(e) => setGewicht(e.target.value)}
                                 min="0"
                                 max="300"
                                 required
@@ -232,11 +314,44 @@ const Gewicht = () => {
                         </Col>
                     </Row>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleCloseAdd}>Cancel</Button>
+                    <Button onClick={handleSave}>Save</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showEdit} onHide={handleCloseEdit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Gewicht Bewerken</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <Col>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Voeg je nieuwe gewicht in."
+                                value={editGewicht}
+                                onChange={(e) => setEditGewicht(e.target.value)}
+                                min="0"
+                                max="300"
+                                required
+                            />
+                        </Col>
+                        <Button  className="btn delete-btn"
+                                 id="delete-button"
+                                 onClick={() => {
+                                     handleDelete(selectedItem.id);
+                                 }}>
+                            <MdDelete size={18}/>
+                        </Button>
+                    </Row>
+                </Modal.Body>
                 <Modal.Footer className="menu-footer">
-                    <Button className="btn menu-btn" onClick={handleCloseAdd}>
+                    <Button className="btn menu-btn" onClick={handleCloseEdit}>
                         Cancel
                     </Button>
-                    <Button className="btn menu-btn" onClick={handleSave}>
+                    <Button className="btn menu-btn" onClick={handleUpdate}>
                         Save Changes
                     </Button>
                 </Modal.Footer>

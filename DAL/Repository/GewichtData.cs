@@ -20,6 +20,17 @@ public class GewichtData :IGewichtData
             .ToListAsync();
     }
 
+    public async Task<GewichtDetails> GetGewicht(int idGewicht)
+    {
+        var gewicht = _context.Gewichten.FirstOrDefault(gm => gm.id == idGewicht);
+        if (gewicht == null)
+        {
+            return null;
+        }
+
+        return new GewichtDetails(gewicht.id, gewicht.gewicht, gewicht.datumToegevoegd);
+    }
+
     public async Task SetGewicht(double gewicht)
     {
         var Gewicht = new DAL.Models.GewichtModel { gewicht = gewicht, datumToegevoegd = DateTime.Now.Date };

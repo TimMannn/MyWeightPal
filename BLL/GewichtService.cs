@@ -13,6 +13,11 @@ public class GewichtService
     {
         return await _gewichtData.GetGewicht();
     }
+    
+    public async Task<GewichtDetails> GetGewicht(int id)
+    {
+        return await _gewichtData.GetGewicht(id);
+    }
 
     public async Task SetGewicht(double gewicht)
     {

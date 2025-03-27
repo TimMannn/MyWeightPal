@@ -81,6 +81,16 @@ button.edit-btn {
     text-align: center;
 }
 
+button.delete-btn {
+    background-color: #dc3545;
+    border: none;
+    width: 40px;
+    margin: 1px;
+    height: 40px;
+    vertical-align: center;
+    text-align: center;
+}
+
 .menu-footer {
     justify-content: center;
 }

@@ -29,6 +29,18 @@ public class GewichtController : ControllerBase
             return StatusCode(500, "internal server error");
         }
     }
+    
+    [HttpGet("gewicht{id}")]
+    public async Task<ActionResult<DAL.Models.GewichtModel>> GetGewicht(int id)
+    {
+        var gewicht = await _gewichtService.GetGewicht(id); 
+        if (gewicht == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(gewicht);
+    }
 
     [HttpPost("gewicht")]
     public async Task<ActionResult<DAL.Models.GewichtModel>> SetGewicht([FromBody] AddGewichtModel model)
