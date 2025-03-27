@@ -9,7 +9,6 @@ import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
-import ReactConfetti from "react-confetti";
 import Confetti from './Confetti';
 
 
@@ -21,18 +20,35 @@ const Gewicht = () => {
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
     const [chartData, setChartData] = useState({ series: [], options: {} });
     const navigate = useNavigate();
+    
+    
     const [Gewicht, setGewicht] = useState("");
     const [showAdd, setShowAdd] = useState(false);
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => setShowAdd(true);
 
+    
     const [editID, setEditID] = useState("");
     const [editGewicht, setEditGewicht] = useState("");
     const [showEdit, setShowEdit] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-
     const handleCloseEdit = () => setShowEdit(false);
     const handleShowEdit = () => setShowEdit(true);
+
+
+    const [DoelGewicht, setDoelGewicht] = useState("");
+    const [showDoelAdd, setShowDoelAdd] = useState(false);
+    const handleCloseDoelAdd = () => setShowDoelAdd(false);
+    const handleShowDoelAdd = () => setShowDoelAdd(true);
+
+
+    const [editDoelID, setEditDoelID] = useState("");
+    const [editDoelGewicht, setEditDoelGewicht] = useState("");
+    const [showDoelEdit, setDoelShowEdit] = useState(false);
+    const handleCloseDoelEdit = () => setShowDoelEdit(false);
+    const handleShowDoelEdit = () => setShowDoelEdit(true);
+    
+    
     const [confettiActive, setConfettiActive] = useState(false);
 
 
@@ -170,7 +186,30 @@ const Gewicht = () => {
             });
     };
 
+    const handleDoelSave = () => {
+        const data = {
+            doelgewicht: DoelGewicht,
+            datum: new Date().toLocaleDateString("sv-SE")
+        };
 
+        axios
+            .post("https://localhost:7209/api/Gewicht/doelgewicht", data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getDataDoelGewicht();
+                    setDoelGewicht("");
+                    handleCloseDoelAdd();
+                    toast.success("Doelgewicht toegevoegd!");
+                } 
+            })
+            .catch((error) => {
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Gewicht toevoegen mislukt!",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
+            });
+    };
+    
     const handleEdit = (ID) => {
         handleShowEdit();
         axios
@@ -268,7 +307,7 @@ const Gewicht = () => {
                     <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
-                    <Button className="btn doelgewichttoevoegen-btn">
+                    <Button className="btn doelgewichttoevoegen-btn" onClick={handleShowDoelAdd}>
                         Doelgewicht toevoegen <IoIosAddCircle />
                     </Button>
                 </div>
@@ -356,6 +395,7 @@ const Gewicht = () => {
                 </Modal.Footer>
             </Modal>
 
+            {/*Pop-up gewicht bewerken*/}
             <Modal show={showEdit} onHide={handleCloseEdit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Gewicht Bewerken</Modal.Title>
@@ -385,6 +425,71 @@ const Gewicht = () => {
                 </Modal.Body>
                 <Modal.Footer className="menu-footer">
                     <Button className="btn menu-btn" onClick={handleCloseEdit}>
+                        Cancel
+                    </Button>
+                    <Button className="btn menu-btn" onClick={handleUpdate}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/*Pop-up doelgewicht toevoegen*/}
+            <Modal show={showDoelAdd} onHide={handleCloseDoelAdd}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Nieuw doelgewicht toevoegen.</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <Col>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Voer je doelgewicht in."
+                                value={DoelGewicht}
+                                onChange={(e) => setDoelGewicht(e.target.value)}
+                                min="0"
+                                max="200"
+                                required
+                            />
+                        </Col>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleCloseDoelAdd}>Cancel</Button>
+                    <Button onClick={handleDoelSave}>Save</Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/*Pop-up doelgewicht bewerken*/}
+            <Modal show={showDoelEdit} onHide={handleCloseDoelEdit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Doelgewicht Bewerken</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <Col>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Voeg je nieuwe gewicht in."
+                                value={editDoelGewicht}
+                                onChange={(e) => setEditDoelGewicht(e.target.value)}
+                                min="0"
+                                max="200"
+                                required
+                            />
+                        </Col>
+                        <Button  className="btn delete-btn"
+                                 id="delete-button"
+                                 onClick={() => {
+                                     handleDelete(selectedItem.id);
+                                 }}>
+                            <MdDelete size={18}/>
+                        </Button>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer className="menu-footer">
+                    <Button className="btn menu-btn" onClick={handleCloseDoelEdit}>
                         Cancel
                     </Button>
                     <Button className="btn menu-btn" onClick={handleUpdate}>
