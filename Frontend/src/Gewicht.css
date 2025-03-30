@@ -68,7 +68,6 @@ table.custom-table td {
 }
 
 
-
 button.logout-btn {
     background-color: #3399ff;
     border-color: #66b2ff;
@@ -146,8 +145,23 @@ button.delete-btn {
     text-align: center;
 }
 
+button.deletemargin-btn {
+    background-color: #dc3545;
+    border: none;
+    width: 40px;
+    margin-top: 22px;
+    margin-right: 8px;
+    height: 40px;
+    vertical-align: center;
+    text-align: center;
+}
+
 .menu-footer {
     justify-content: center;
+}
+
+.text-center {
+    text-align: center;
 }
 
 button.menu-btn {

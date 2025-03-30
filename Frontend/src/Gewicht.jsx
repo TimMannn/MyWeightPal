@@ -31,7 +31,6 @@ const Gewicht = () => {
     const [editID, setEditID] = useState("");
     const [editGewicht, setEditGewicht] = useState("");
     const [showEdit, setShowEdit] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
     const handleCloseEdit = () => setShowEdit(false);
     const handleShowEdit = () => setShowEdit(true);
 
@@ -44,11 +43,12 @@ const Gewicht = () => {
 
     const [editDoelID, setEditDoelID] = useState("");
     const [editDoelGewicht, setEditDoelGewicht] = useState("");
-    const [showDoelEdit, setDoelShowEdit] = useState(false);
+    const [showDoelEdit, setShowDoelEdit] = useState(false);
     const handleCloseDoelEdit = () => setShowDoelEdit(false);
     const handleShowDoelEdit = () => setShowDoelEdit(true);
+
     
-    
+    const [selectedItem, setSelectedItem] = useState(null);
     const [confettiActive, setConfettiActive] = useState(false);
 
 
@@ -149,6 +149,20 @@ const Gewicht = () => {
             handleShowEdit();
         } else {
             handleShowAdd();
+        }
+    };
+    
+    const handleExistingDoelgewichtCheck = () => {
+        if (dataDoelGewicht.length > 0)
+        {
+            const huidigdoel = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
+            const doelgewichtid = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].id);
+            setEditDoelGewicht(huidigdoel);
+            setEditDoelID(doelgewichtid);
+            handleShowDoelEdit();
+        }
+        else{
+            handleShowDoelAdd();
         }
     };
     
@@ -299,7 +313,40 @@ const Gewicht = () => {
             });
     };
 
+    const handleDoelUpdate = () => {
+        const data = {
+            id: editDoelID,
+            doelgewicht: editDoelGewicht,
+        };
 
+        if (editDoelGewicht.trim() === "") {
+            toast.error("Voer een nieuw doelgewicht in!");
+            return;
+        }
+
+        axios
+            .put(`https://localhost:7209/api/Gewicht/doelgewicht${editDoelID}`, data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getDataDoelGewicht();
+                    setEditDoelGewicht("");
+                    setEditDoelID("");
+                    handleCloseDoelEdit();
+                    toast.success("Doelgewicht is succesvol bewerkt!");
+                    
+                } else {
+                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error("Error details:", error.response);
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Error updating gewicht",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
+            });
+    };
+    
     const handleDelete = (ID) => {
         const clear = () => {
             setEditGewicht("");
@@ -324,6 +371,30 @@ const Gewicht = () => {
         }
     };
 
+    const handleDoelDelete = (ID) => {
+        const clear = () => {
+            setEditDoelGewicht("");
+            setEditDoelID("");
+        };
+
+        if (window.confirm(`Weet je zeker dat je het doelgewicht wilt verwijderen?`)) {
+            axios
+                .delete(`https://localhost:7209/api/Gewicht/doelgewicht${ID}`)
+                .then((result) => {
+                    if (result.status === 200) {
+                        clear();
+                        handleCloseDoelEdit();
+                        toast.success("Doelgewicht is succesvol verwijderd!");
+                        getDataDoelGewicht();
+                    }
+                })
+                .catch((error) => {
+                    toast.error("Doelgewicht verwijderen mislukt!");
+                    console.log(error);
+                });
+        }
+    };
+
     return (
         <Fragment>
             <ToastContainer />
@@ -340,7 +411,7 @@ const Gewicht = () => {
                     <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
                         Gewicht toevoegen <IoIosAddCircle />
                     </Button>
-                    <Button className="btn doelgewichttoevoegen-btn" onClick={handleShowDoelAdd}>
+                    <Button className="btn doelgewichttoevoegen-btn" onClick={handleExistingDoelgewichtCheck}>
                         Doelgewicht toevoegen <IoIosAddCircle />
                     </Button>
                 </div>
@@ -423,8 +494,8 @@ const Gewicht = () => {
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleCloseAdd}>Cancel</Button>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button onClick={handleCloseAdd}>Annuleer</Button>
+                    <Button onClick={handleSave}>Opslaan</Button>
                 </Modal.Footer>
             </Modal>
 
@@ -458,10 +529,10 @@ const Gewicht = () => {
                 </Modal.Body>
                 <Modal.Footer className="menu-footer">
                     <Button className="btn menu-btn" onClick={handleCloseEdit}>
-                        Cancel
+                        Annuleer
                     </Button>
                     <Button className="btn menu-btn" onClick={handleUpdate}>
-                        Save Changes
+                        Wijzigingen opslaan
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -488,19 +559,20 @@ const Gewicht = () => {
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleCloseDoelAdd}>Cancel</Button>
-                    <Button onClick={handleNotSameWeight}>Save</Button>
+                    <Button onClick={handleCloseDoelAdd}>Annuleer</Button>
+                    <Button onClick={handleNotSameWeight}>Opslaan</Button>
                 </Modal.Footer>
             </Modal>
 
             {/*Pop-up doelgewicht bewerken*/}
             <Modal show={showDoelEdit} onHide={handleCloseDoelEdit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Doelgewicht Bewerken</Modal.Title>
+                    <Modal.Title>Doelgewicht</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Row>
                         <Col>
+                            <label>Huidig doel:</label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -512,22 +584,53 @@ const Gewicht = () => {
                                 required
                             />
                         </Col>
-                        <Button  className="btn delete-btn"
+                        <Button  className="btn deletemargin-btn"
                                  id="delete-button"
-                                 onClick={() => {
-                                     handleDelete(selectedItem.id);
+                                 onClick={() => {handleDoelDelete(editDoelID);
                                  }}>
                             <MdDelete size={18}/>
                         </Button>
                     </Row>
+                    <div className="menu-footer">
+                        <Button className="btn menu-btn" onClick={handleCloseDoelEdit}>
+                            Annuleer
+                        </Button>
+                        <Button className="btn menu-btn" onClick={handleDoelUpdate}
+                        >
+                            Wijzigingen opslaan
+                        </Button>
+                    </div>
                 </Modal.Body>
-                <Modal.Footer className="menu-footer">
-                    <Button className="btn menu-btn" onClick={handleCloseDoelEdit}>
-                        Cancel
-                    </Button>
-                    <Button className="btn menu-btn" onClick={handleUpdate}>
-                        Save Changes
-                    </Button>
+                <Modal.Footer className="d-flex justify-content-center">
+                    <h3>Behaalde doelgewicht</h3>
+                    <Container className="custom2-table-container">
+                        <Table striped bordered hover className="custom2-table">
+                            <thead className="header-row">
+                            <tr>
+                                <th>Doelgewicht</th>
+                                <th>StartDatum</th>
+                                <th>EindDatum</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {dataDoelGewicht.length > 0 ? (
+                                dataDoelGewicht
+                                    .slice()
+                                    .sort((a, b) => new Date(b.datum) - new Date(a.datum))
+                                    .map((item, index) => (
+                                        <tr key={index}>
+                                            <td>{item.doelgewicht} kg</td>
+                                            <td>{new Date(item.datum).toLocaleDateString("nl-NL")}</td> {/* Oplossing voor juiste datumweergave */}
+                                        </tr>
+                                    ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3">Er is nog geen gewicht toegevoegd.</td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </Table>
+                    </Container>
                 </Modal.Footer>
             </Modal>
         </Fragment>
