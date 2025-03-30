@@ -153,26 +153,38 @@ const Gewicht = () => {
     };
 
     const handleSave = () => {
-        const data = {
+        const axiosData = {
             gewicht: Gewicht,
             datum: new Date().toLocaleDateString("sv-SE")
         };
 
         axios
-            .post("https://localhost:7209/api/Gewicht/gewicht", data)
+            .post("https://localhost:7209/api/Gewicht/gewicht", axiosData)
             .then((response) => {
                 if (response.status === 200) {
                     getData();
                     setGewicht("");
                     handleCloseAdd();
                     toast.success("Gewicht toegevoegd!");
-                    
-                    if (
-                        dataDoelGewicht.length > 0 &&
-                        parseFloat(Gewicht) >= parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht)
-                    ) {
-                        setConfettiActive(true);
-                        setTimeout(() => setConfettiActive(false), 10000); // Confetti stopt na 10 seconden
+
+                    // Check of er minimaal 1 eerder gewicht en een doelgewicht is
+                    if (dataDoelGewicht.length > 0 && data.length > 0) {
+                        const huidigGewicht = parseFloat(Gewicht);
+                        const vorigeGewicht = parseFloat(data[data.length - 1].gewicht); // Laatste ingevoerde gewicht
+                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht); // Laatste doelgewicht
+
+                        // Bepaal of de gebruiker aan het aankomen of afvallen is
+                        const doelIsAankomen = doelGewicht > vorigeGewicht;
+
+                        // Controleer of het huidige gewicht het doel heeft behaald
+                        const doelBehaald = doelIsAankomen
+                            ? huidigGewicht >= doelGewicht // Aankomen: gewicht moet groter/gelijk zijn dan het doel
+                            : huidigGewicht <= doelGewicht; // Afvallen: gewicht moet kleiner/gelijk zijn dan het doel
+
+                        if (doelBehaald) {
+                            setConfettiActive(true);
+                            setTimeout(() => setConfettiActive(false), 10000);
+                        }
                     }
                 } else {
                     toast.error(`Gewicht toevoegen mislukt: ${response.data.message}`);
@@ -185,6 +197,9 @@ const Gewicht = () => {
                 errorMessages.forEach((msg) => toast.error(msg));
             });
     };
+
+
+
 
     const handleDoelSave = () => {
         const data = {
