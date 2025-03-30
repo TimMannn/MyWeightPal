@@ -151,6 +151,24 @@ const Gewicht = () => {
             handleShowAdd();
         }
     };
+    
+    const handleNotSameWeight = () => {
+        if(data.length > 0)
+        {
+            const vorigeGewicht = parseFloat(data[data.length - 1].gewicht);
+            const nieuwDoel = parseFloat(DoelGewicht);
+            if (nieuwDoel === vorigeGewicht)
+            {
+                toast.error("Doel mag niet hetzelfde zijn als je huidige gewicht!")
+            }
+            else {
+                handleDoelSave()
+            }
+        }
+        else{
+            handleDoelSave()
+        }
+    };
 
     const handleSave = () => {
         const axiosData = {
@@ -471,7 +489,7 @@ const Gewicht = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleCloseDoelAdd}>Cancel</Button>
-                    <Button onClick={handleDoelSave}>Save</Button>
+                    <Button onClick={handleNotSameWeight}>Save</Button>
                 </Modal.Footer>
             </Modal>
 
