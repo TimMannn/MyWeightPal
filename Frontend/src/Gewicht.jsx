@@ -166,7 +166,9 @@ const Gewicht = () => {
                 setEditDoelID(doelgewichtid);
                 handleShowDoelEdit();
             }
-            handleShowDoelAdd();
+            else{
+                handleShowDoelAdd();
+            }
         }
         else{
             handleShowDoelAdd();
