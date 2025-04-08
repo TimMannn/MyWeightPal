@@ -11,6 +11,6 @@ public interface IGewichtData
     
     Task<List<DoelGewichtDetails>> GetDoelGewicht();
     Task SetDoelGewicht(double gewicht);
-    Task EditDoelGewicht(int idDoelGewicht, double gewicht);
+    Task EditDoelGewicht(int idDoelGewicht, double? gewicht, DateTime? datumBehaald);
     Task DeleteDoelGewicht(int idDoelGewicht);
 }

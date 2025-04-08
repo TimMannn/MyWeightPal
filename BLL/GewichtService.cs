@@ -46,9 +46,9 @@ public class GewichtService
         await _gewichtData.SetDoelGewicht(doelgewicht);
     }
 
-    public async Task EditDoelGewicht(int idDoelGewicht, double doelgewicht)
+    public async Task EditDoelGewicht(int idDoelGewicht, double? doelgewicht, DateTime? datumBehaald)
     {
-        await _gewichtData.EditDoelGewicht(idDoelGewicht, doelgewicht);
+        await _gewichtData.EditDoelGewicht(idDoelGewicht, doelgewicht, datumBehaald);
     }
     
     public async Task DeleteDoelGewicht(int idDoelGewicht)

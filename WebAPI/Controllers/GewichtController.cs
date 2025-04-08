@@ -137,7 +137,7 @@ public class GewichtController : ControllerBase
             });
         }
 
-        await _gewichtService.EditDoelGewicht(model.Id, model.Doelgewicht);
+        await _gewichtService.EditDoelGewicht(model.Id, model.Doelgewicht, model.Datumbehaald);
         return Ok();
     }
 

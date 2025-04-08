@@ -43,6 +43,7 @@ const Gewicht = () => {
 
     const [editDoelID, setEditDoelID] = useState("");
     const [editDoelGewicht, setEditDoelGewicht] = useState("");
+    const [editDoelDatumBehaald, setEditDoelDatumBehaald] = useState(null)
     const [showDoelEdit, setShowDoelEdit] = useState(false);
     const handleCloseDoelEdit = () => setShowDoelEdit(false);
     const handleShowDoelEdit = () => setShowDoelEdit(true);
@@ -155,11 +156,17 @@ const Gewicht = () => {
     const handleExistingDoelgewichtCheck = () => {
         if (dataDoelGewicht.length > 0)
         {
-            const huidigdoel = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
-            const doelgewichtid = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].id);
-            setEditDoelGewicht(huidigdoel);
-            setEditDoelID(doelgewichtid);
-            handleShowDoelEdit();
+            const laatsteDoel = dataDoelGewicht[dataDoelGewicht.length - 1];
+            
+            if(laatsteDoel.datumbehaald === null)
+            {
+                const huidigdoel = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
+                const doelgewichtid = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].id);
+                setEditDoelGewicht(huidigdoel);
+                setEditDoelID(doelgewichtid);
+                handleShowDoelEdit();
+            }
+            handleShowDoelAdd();
         }
         else{
             handleShowDoelAdd();
@@ -215,6 +222,7 @@ const Gewicht = () => {
 
                         if (doelBehaald) {
                             setConfettiActive(true);
+                            handleDoelGewichtBehaald();
                             setTimeout(() => setConfettiActive(false), 10000);
                         }
                     }
@@ -230,6 +238,35 @@ const Gewicht = () => {
             });
     };
 
+    const handleDoelGewichtBehaald = () => {
+        const laatsteDoel = dataDoelGewicht[dataDoelGewicht.length - 1];
+        
+        const huidigeDatum = new Date().toLocaleDateString("sv-SE");
+        const data = {
+            id: laatsteDoel.id,
+            doelgewicht: laatsteDoel.doelgewicht,
+            datumBehaald: huidigeDatum,
+        };
+
+        axios
+            .put(`https://localhost:7209/api/Gewicht/doelgewicht${laatsteDoel.id}`, data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getDataDoelGewicht();
+                    toast.success(`Doelgewicht gemarkeerd als behaald! ${laatsteDoel.id}`);
+                } 
+                else {
+                    toast.error("ging nie best");
+                }
+            })
+            .catch((error) => {
+                console.error("Error details:", error.response);
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Error doelgewicht eindDatum",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
+            });
+    }
 
 
 
@@ -292,13 +329,26 @@ const Gewicht = () => {
                     setEditID("");
                     handleCloseEdit();
                     toast.success("Gewicht is succesvol bewerkt!");
-                    
-                    if (
-                        dataDoelGewicht.length > 0 &&
-                        parseFloat(editGewicht) >= parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht)
-                    ) {
-                        setConfettiActive(true);
-                        setTimeout(() => setConfettiActive(false), 10000); // Confetti stopt na 10 seconden
+
+                    // Check of er minimaal 1 eerder gewicht en een doelgewicht is
+                    if (dataDoelGewicht.length > 0 && data.length > 0) {
+                        const huidigGewicht = parseFloat(Gewicht);
+                        const vorigeGewicht = parseFloat(data[data.length - 1].gewicht); // Laatste ingevoerde gewicht
+                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht); // Laatste doelgewicht
+
+                        // Bepaal of de gebruiker aan het aankomen of afvallen is
+                        const doelIsAankomen = doelGewicht > vorigeGewicht;
+
+                        // Controleer of het huidige gewicht het doel heeft behaald
+                        const doelBehaald = doelIsAankomen
+                            ? huidigGewicht >= doelGewicht // Aankomen: gewicht moet groter/gelijk zijn dan het doel
+                            : huidigGewicht <= doelGewicht; // Afvallen: gewicht moet kleiner/gelijk zijn dan het doel
+
+                        if (doelBehaald) {
+                            setConfettiActive(true);
+                            handleDoelGewichtBehaald();
+                            setTimeout(() => setConfettiActive(false), 10000);
+                        }
                     }
                 } else {
                     toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
@@ -319,11 +369,6 @@ const Gewicht = () => {
             doelgewicht: editDoelGewicht,
         };
 
-        if (editDoelGewicht.trim() === "") {
-            toast.error("Voer een nieuw doelgewicht in!");
-            return;
-        }
-
         axios
             .put(`https://localhost:7209/api/Gewicht/doelgewicht${editDoelID}`, data)
             .then((response) => {
@@ -334,6 +379,34 @@ const Gewicht = () => {
                     handleCloseDoelEdit();
                     toast.success("Doelgewicht is succesvol bewerkt!");
                     
+                } else {
+                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+                }
+            })
+            .catch((error) => {
+                console.error("Error details:", error.response);
+                const errorMessages = error.response?.data?.messages || [
+                    error.response?.data?.message || "Error updating gewicht",
+                ];
+                errorMessages.forEach((msg) => toast.error(msg));
+            });
+    };
+    
+    const handleDoelDatumUpdate = () => {
+        const data = {
+            id: editDoelID,
+            datumbehaald: editDoelDatumBehaald,
+        };
+
+        axios
+            .put(`https://localhost:7209/api/Gewicht/doelgewicht${editDoelID}`, data)
+            .then((response) => {
+                if (response.status === 200) {
+                    getDataDoelGewicht();
+                    setEditDoelDatumBehaald(null);
+                    setEditDoelID("");
+                    toast.done("Gefeliciteerd, je hebt je doel behaald!");
+
                 } else {
                     toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
                 }
@@ -615,17 +688,18 @@ const Gewicht = () => {
                             <tbody>
                             {dataDoelGewicht.length > 0 ? (
                                 dataDoelGewicht
-                                    .slice()
-                                    .sort((a, b) => new Date(b.datum) - new Date(a.datum))
+                                    .filter((item) => item.datumbehaald)
+                                    .sort((a, b) => new Date(b.datumbehaald) - new Date(a.datumbehaald))
                                     .map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.doelgewicht} kg</td>
                                             <td>{new Date(item.datum).toLocaleDateString("nl-NL")}</td> {/* Oplossing voor juiste datumweergave */}
+                                            <td>{new Date(item.datumbehaald).toLocaleDateString("nl-NL")}</td>
                                         </tr>
                                     ))
                             ) : (
                                 <tr>
-                                    <td colSpan="3">Er is nog geen gewicht toegevoegd.</td>
+                                    <td colSpan="3">Er is nog geen doel behaald, maar geef niet op!</td>
                                 </tr>
                             )}
                             </tbody>

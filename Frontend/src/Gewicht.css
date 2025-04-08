@@ -145,6 +145,10 @@ button.delete-btn {
     text-align: center;
 }
 
+button.delete-btn:hover {
+    background-color: #c82333;
+}
+
 button.deletemargin-btn {
     background-color: #dc3545;
     border: none;
@@ -154,6 +158,10 @@ button.deletemargin-btn {
     height: 40px;
     vertical-align: center;
     text-align: center;
+}
+
+button.deletemargin-btn:hover {
+    background-color: #c82333;
 }
 
 .menu-footer {

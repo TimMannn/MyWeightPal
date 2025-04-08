@@ -14,4 +14,6 @@ public class DoelGewichtModel
 
     [Required]
     public DateTime datumToegevoegd { get; set; } = DateTime.Now.Date;
+    
+    public DateTime? datumBehaald { get; set; }
 }

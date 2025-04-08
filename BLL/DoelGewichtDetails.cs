@@ -6,11 +6,12 @@ public class DoelGewichtDetails
 {
     public DoelGewichtDetails() {}
 
-    public DoelGewichtDetails(int idDoelGewicht, double doelgewicht, DateTime doeldatum)
+    public DoelGewichtDetails(int idDoelGewicht, double doelgewicht, DateTime doeldatum, DateTime? doeldatumbehaald)
     {
         Id = idDoelGewicht;
         Doelgewicht = doelgewicht;
         Datum = doeldatum;
+        Datumbehaald = doeldatumbehaald;
     }
     
     [Required] 
@@ -22,4 +23,6 @@ public class DoelGewichtDetails
     
     [Required]
     public DateTime Datum { get; set; }
+    
+    public DateTime? Datumbehaald { get; set; }
 }

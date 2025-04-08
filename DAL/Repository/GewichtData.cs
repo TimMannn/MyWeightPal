@@ -63,7 +63,7 @@ public class GewichtData :IGewichtData
     public async Task<List<DoelGewichtDetails>> GetDoelGewicht()
     {
         return await _context.DoelGewichten
-            .Select(dgm => new DoelGewichtDetails(dgm.id, dgm.doelgewicht, dgm.datumToegevoegd))
+            .Select(dgm => new DoelGewichtDetails(dgm.id, dgm.doelgewicht, dgm.datumToegevoegd, dgm.datumBehaald))
             .ToListAsync();
     }
     
@@ -74,17 +74,21 @@ public class GewichtData :IGewichtData
         await _context.SaveChangesAsync();
     }
 
-    public async Task EditDoelGewicht(int idDoelGewicht,double doelgewicht)
+    public async Task EditDoelGewicht(int idDoelGewicht, double? doelgewicht, DateTime? datumBehaald)
     {
-        var DoelGewicht = await _context.DoelGewichten.FirstOrDefaultAsync(dgm => dgm.id == idDoelGewicht);
-        if (DoelGewicht != null)
+        var doelGewicht = await _context.DoelGewichten.FirstOrDefaultAsync(dgm => dgm.id == idDoelGewicht);
+        if (doelGewicht != null)
         {
-            DoelGewicht.doelgewicht = doelgewicht;
-            _context.DoelGewichten.Update(DoelGewicht);
+            if (doelgewicht.HasValue)
+                doelGewicht.doelgewicht = doelgewicht.Value;
+
+            if (datumBehaald.HasValue)
+                doelGewicht.datumBehaald = datumBehaald.Value;
+
+            _context.DoelGewichten.Update(doelGewicht);
             await _context.SaveChangesAsync();
         }
     }
-
 
     public async Task DeleteDoelGewicht(int idDoelGewicht)
     {
