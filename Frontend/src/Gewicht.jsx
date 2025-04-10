@@ -128,6 +128,27 @@ const Gewicht = () => {
     };
 
     const updateChartData = () => {
+        const laatsteDoelGewicht = dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1] : null;
+        const datumBehaald = laatsteDoelGewicht ? laatsteDoelGewicht.datumbehaald : null;
+        
+        const annotations = datumBehaald === null ? [
+            {
+                y: laatsteDoelGewicht ? laatsteDoelGewicht.doelgewicht : null,
+                borderColor: '#33cc66',
+                strokeDashArray: 0,
+                strokeWidth: 4,
+                label: {
+                    borderColor: '#33cc66',
+                    style: {
+                        color: '#fff',
+                        background: '#33cc66'
+                    },
+                    text: laatsteDoelGewicht ? `Doel: ${laatsteDoelGewicht.doelgewicht} kg` : 'Geen doelgewicht ingesteld'
+                }
+            }
+        ] : [];
+
+        // Stel de chart data in met de juiste annotaties
         setChartData({
             series: [
                 {
@@ -157,26 +178,12 @@ const Gewicht = () => {
                     x: { format: "yyyy-MM-dd" }
                 },
                 annotations: {
-                    yaxis: [
-                        {
-                            y: dataDoelGewicht.length > 0 ? dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht : null,
-                            borderColor: '#33cc66',
-                            strokeDashArray: 0,
-                            strokeWidth: 4,
-                            label: {
-                                borderColor: '#33cc66',
-                                style: {
-                                    color: '#fff',
-                                    background: '#33cc66'
-                                },
-                                text: dataDoelGewicht.length > 0 ? `Doel: ${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg` : 'Geen doelgewicht ingesteld'
-                            }
-                        }
-                    ]
+                    yaxis: annotations
                 }
             }
         });
     };
+
 
     const handleDuplicateCheck = () => {
         const today = new Date().toLocaleDateString("sv-SE");
@@ -524,7 +531,7 @@ const Gewicht = () => {
             <Container fluid>
                 <br />
                 <div className={`animate__animated ${animationClass}`}>
-                    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doelgewicht: {dataDoelGewicht.length > 0
+                    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doel gewicht: {dataDoelGewicht.length > 0
                         ? `${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg`
                         : "Er is nog geen doelgewicht ingesteld"}
                     </h3>
@@ -738,7 +745,8 @@ const Gewicht = () => {
                             {dataDoelGewicht.length > 0 ? (
                                 dataDoelGewicht
                                     .filter((item) => item.datumbehaald)
-                                    .sort((a, b) => new Date(b.datumbehaald) - new Date(a.datumbehaald))
+                                    .slice()
+                                    .sort((a, b) => b.id - a.id)
                                     .map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.doelgewicht} kg</td>
