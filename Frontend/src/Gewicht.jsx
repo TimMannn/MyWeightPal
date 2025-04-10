@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Gewicht.css";
+import 'animate.css';
 import axios from "axios";
 import { Navbar, Container, Button, Table, Modal, Row, Col } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
@@ -52,6 +53,45 @@ const Gewicht = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [confettiActive, setConfettiActive] = useState(false);
 
+    const [animateHinge, setAnimateHinge] = useState(false);
+    
+    const handleAnnuleerClick = () => {
+        setAnimateHinge(true);
+    };
+
+    const handleAnimationEnd = () => {
+        if (animateHinge) {
+            handleCloseDoelEdit();
+            handleCloseDoelAdd();
+            handleCloseEdit();
+            handleCloseAdd();
+            setAnimateHinge(false);
+        }
+    };
+
+    const [animationClass, setAnimationClass] = useState("");
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const triggerOutAndUpdate = () => {
+        handleCloseDoelEdit();
+        setAnimationClass("animate__bounceOutLeft");
+        setIsUpdating(true);
+        
+        setTimeout(() => {
+            handleDoelUpdate();
+        }, 1000); 
+    };
+
+    const triggerOutAndSave = () => {
+        handleCloseDoelAdd();
+        setAnimationClass("animate__bounceOutLeft");
+        setIsUpdating(true);
+
+        setTimeout(() => {
+            handleDoelSave();
+        }, 1000);
+    };
+
 
 
     useEffect(() => {
@@ -63,16 +103,16 @@ const Gewicht = () => {
         updateChartData();
     }, [data, dataDoelGewicht]);
 
-    const getData = () => {
-        axios.get(`https://localhost:7209/api/Gewicht/gewicht`)
-            .then((result) => {
-                console.log("Data responds: ", result.data);
-                setData(result.data);
-            })
-            .catch((error) => {
-                console.error("Error met ophalen van gewicht:", error);
-                toast.error("Gewicht ophalen mislukt!");
-            });
+    const getData = async () => {
+        try {
+            const result = await axios.get("https://localhost:7209/api/Gewicht/gewicht");
+            console.log("Data responds: ", result.data);
+            setData(result.data);
+            return result.data;
+        } catch (error) {
+            console.error("Error met ophalen van gewicht:", error);
+            toast.error("Gewicht ophalen mislukt!");
+        }
     };
 
     const getDataDoelGewicht = () => {
@@ -185,11 +225,29 @@ const Gewicht = () => {
                 toast.error("Doel mag niet hetzelfde zijn als je huidige gewicht!")
             }
             else {
-                handleDoelSave()
+                triggerOutAndSave()
             }
         }
         else{
-            handleDoelSave()
+            triggerOutAndSave()
+        }
+    };
+
+    const handleNotSameWeightEdit = () => {
+        if(data.length > 0)
+        {
+            const vorigeGewicht = parseFloat(data[data.length - 1].gewicht);
+            const nieuwDoel = parseFloat(editDoelGewicht);
+            if (nieuwDoel === vorigeGewicht)
+            {
+                toast.error("Doel mag niet hetzelfde zijn als je huidige gewicht!")
+            }
+            else {
+                triggerOutAndUpdate()
+            }
+        }
+        else{
+            triggerOutAndUpdate()
         }
     };
 
@@ -207,20 +265,17 @@ const Gewicht = () => {
                     setGewicht("");
                     handleCloseAdd();
                     toast.success("Gewicht toegevoegd!");
-
-                    // Check of er minimaal 1 eerder gewicht en een doelgewicht is
+                    
                     if (dataDoelGewicht.length > 0 && data.length > 0) {
                         const huidigGewicht = parseFloat(Gewicht);
-                        const vorigeGewicht = parseFloat(data[data.length - 1].gewicht); // Laatste ingevoerde gewicht
-                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht); // Laatste doelgewicht
-
-                        // Bepaal of de gebruiker aan het aankomen of afvallen is
+                        const vorigeGewicht = parseFloat(data[data.length - 1].gewicht);
+                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
+                        
                         const doelIsAankomen = doelGewicht > vorigeGewicht;
-
-                        // Controleer of het huidige gewicht het doel heeft behaald
+                        
                         const doelBehaald = doelIsAankomen
-                            ? huidigGewicht >= doelGewicht // Aankomen: gewicht moet groter/gelijk zijn dan het doel
-                            : huidigGewicht <= doelGewicht; // Afvallen: gewicht moet kleiner/gelijk zijn dan het doel
+                            ? huidigGewicht >= doelGewicht 
+                            : huidigGewicht <= doelGewicht;
 
                         if (doelBehaald) {
                             setConfettiActive(true);
@@ -255,7 +310,6 @@ const Gewicht = () => {
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
-                    toast.success(`Doelgewicht gemarkeerd als behaald! ${laatsteDoel.id}`);
                 } 
                 else {
                     toast.error("ging nie best");
@@ -285,7 +339,8 @@ const Gewicht = () => {
                     getDataDoelGewicht();
                     setDoelGewicht("");
                     handleCloseDoelAdd();
-                    toast.success("Doelgewicht toegevoegd!");
+                    setAnimationClass("animate__bounceInRight");
+                    setIsUpdating(false);
                 } 
             })
             .catch((error) => {
@@ -293,9 +348,12 @@ const Gewicht = () => {
                     error.response?.data?.message || "Gewicht toevoegen mislukt!",
                 ];
                 errorMessages.forEach((msg) => toast.error(msg));
+                setIsUpdating(false);
             });
     };
     
+    
+     
     const handleEdit = (ID) => {
         handleShowEdit();
         axios
@@ -311,8 +369,8 @@ const Gewicht = () => {
             })
     };
 
-    const handleUpdate = () => {
-        const data = {
+    const handleUpdate = async () => {
+        const dataToSend = {
             id: editID,
             gewicht: editGewicht,
         };
@@ -322,47 +380,44 @@ const Gewicht = () => {
             return;
         }
 
-        axios
-            .put(`https://localhost:7209/api/Gewicht/gewicht${editID}`, data)
-            .then((response) => {
-                if (response.status === 200) {
-                    getData();
-                    setEditGewicht("");
-                    setEditID("");
-                    handleCloseEdit();
-                    toast.success("Gewicht is succesvol bewerkt!");
+        try {
+            const response = await axios.put(`https://localhost:7209/api/Gewicht/gewicht${editID}`, dataToSend);
 
-                    // Check of er minimaal 1 eerder gewicht en een doelgewicht is
-                    if (dataDoelGewicht.length > 0 && data.length > 0) {
-                        const huidigGewicht = parseFloat(Gewicht);
-                        const vorigeGewicht = parseFloat(data[data.length - 1].gewicht); // Laatste ingevoerde gewicht
-                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht); // Laatste doelgewicht
+            if (response.status === 200) {
+                const nieuweData = await getData();
 
-                        // Bepaal of de gebruiker aan het aankomen of afvallen is
-                        const doelIsAankomen = doelGewicht > vorigeGewicht;
+                setEditGewicht("");
+                setEditID("");
+                handleCloseEdit();
+                toast.success("Gewicht is succesvol bewerkt!");
 
-                        // Controleer of het huidige gewicht het doel heeft behaald
-                        const doelBehaald = doelIsAankomen
-                            ? huidigGewicht >= doelGewicht // Aankomen: gewicht moet groter/gelijk zijn dan het doel
-                            : huidigGewicht <= doelGewicht; // Afvallen: gewicht moet kleiner/gelijk zijn dan het doel
+                if (dataDoelGewicht.length > 0 && nieuweData.length > 1) {
+                    const huidigGewicht = parseFloat(editGewicht);
+                    const vorigeGewicht = parseFloat(nieuweData[nieuweData.length - 2].gewicht);
+                    const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
 
-                        if (doelBehaald) {
-                            setConfettiActive(true);
-                            handleDoelGewichtBehaald();
-                            setTimeout(() => setConfettiActive(false), 10000);
-                        }
+                    const doelIsAankomen = doelGewicht > vorigeGewicht;
+
+                    const doelBehaald = doelIsAankomen
+                        ? huidigGewicht >= doelGewicht
+                        : huidigGewicht <= doelGewicht;
+
+                    if (doelBehaald) {
+                        setConfettiActive(true);
+                        handleDoelGewichtBehaald();
+                        setTimeout(() => setConfettiActive(false), 10000);
                     }
-                } else {
-                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
                 }
-            })
-            .catch((error) => {
-                console.error("Error details:", error.response);
-                const errorMessages = error.response?.data?.messages || [
-                    error.response?.data?.message || "Error updating gewicht",
-                ];
-                errorMessages.forEach((msg) => toast.error(msg));
-            });
+            } else {
+                toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+            }
+        } catch (error) {
+            console.error("Error details:", error.response);
+            const errorMessages = error.response?.data?.messages || [
+                error.response?.data?.message || "Error updating gewicht",
+            ];
+            errorMessages.forEach((msg) => toast.error(msg));
+        }
     };
 
     const handleDoelUpdate = () => {
@@ -378,11 +433,11 @@ const Gewicht = () => {
                     getDataDoelGewicht();
                     setEditDoelGewicht("");
                     setEditDoelID("");
-                    handleCloseDoelEdit();
-                    toast.success("Doelgewicht is succesvol bewerkt!");
-                    
+                    setAnimationClass("animate__bounceInRight");
+                    setIsUpdating(false);
                 } else {
                     toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+                    setIsUpdating(false);
                 }
             })
             .catch((error) => {
@@ -391,34 +446,7 @@ const Gewicht = () => {
                     error.response?.data?.message || "Error updating gewicht",
                 ];
                 errorMessages.forEach((msg) => toast.error(msg));
-            });
-    };
-    
-    const handleDoelDatumUpdate = () => {
-        const data = {
-            id: editDoelID,
-            datumbehaald: editDoelDatumBehaald,
-        };
-
-        axios
-            .put(`https://localhost:7209/api/Gewicht/doelgewicht${editDoelID}`, data)
-            .then((response) => {
-                if (response.status === 200) {
-                    getDataDoelGewicht();
-                    setEditDoelDatumBehaald(null);
-                    setEditDoelID("");
-                    toast.done("Gefeliciteerd, je hebt je doel behaald!");
-
-                } else {
-                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
-                }
-            })
-            .catch((error) => {
-                console.error("Error details:", error.response);
-                const errorMessages = error.response?.data?.messages || [
-                    error.response?.data?.message || "Error updating gewicht",
-                ];
-                errorMessages.forEach((msg) => toast.error(msg));
+                setIsUpdating(false);
             });
     };
     
@@ -495,7 +523,7 @@ const Gewicht = () => {
 
             <Container fluid>
                 <br />
-                <div>
+                <div className={`animate__animated ${animationClass}`}>
                     <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doelgewicht: {dataDoelGewicht.length > 0
                         ? `${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg`
                         : "Er is nog geen doelgewicht ingesteld"}
@@ -569,7 +597,13 @@ const Gewicht = () => {
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleCloseAdd}>Annuleer</Button>
+                    <Button
+                        className={`animate__animated ${animateHinge ? "animate__hinge animate__slower" : ""}`}
+                        onClick={handleAnnuleerClick}
+                        onAnimationEnd={handleAnimationEnd}
+                    >
+                        Annuleer
+                    </Button>
                     <Button onClick={handleSave}>Opslaan</Button>
                 </Modal.Footer>
             </Modal>
@@ -603,7 +637,11 @@ const Gewicht = () => {
                     </Row>
                 </Modal.Body>
                 <Modal.Footer className="menu-footer">
-                    <Button className="btn menu-btn" onClick={handleCloseEdit}>
+                    <Button
+                        className={`btn menu-btn animate__animated ${animateHinge ? "animate__hinge animate__slower" : ""}`}
+                        onClick={handleAnnuleerClick}
+                        onAnimationEnd={handleAnimationEnd}
+                    >
                         Annuleer
                     </Button>
                     <Button className="btn menu-btn" onClick={handleUpdate}>
@@ -634,8 +672,14 @@ const Gewicht = () => {
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleCloseDoelAdd}>Annuleer</Button>
-                    <Button onClick={handleNotSameWeight}>Opslaan</Button>
+                    <Button
+                        className={`animate__animated ${animateHinge ? "animate__hinge animate__slower" : ""}`}
+                        onClick={handleAnnuleerClick}
+                        onAnimationEnd={handleAnimationEnd}
+                    >
+                        Annuleer
+                    </Button>
+                    <Button onClick={handleNotSameWeight} disabled={isUpdating}>Opslaan</Button>
                 </Modal.Footer>
             </Modal>
 
@@ -667,24 +711,27 @@ const Gewicht = () => {
                         </Button>
                     </Row>
                     <div className="menu-footer">
-                        <Button className="btn menu-btn" onClick={handleCloseDoelEdit}>
+                        <Button
+                            className={`btn menu-btn animate__animated ${animateHinge ? "animate__hinge animate__slower" : ""}`}
+                            onClick={handleAnnuleerClick}
+                            onAnimationEnd={handleAnimationEnd}
+                        >
                             Annuleer
                         </Button>
-                        <Button className="btn menu-btn" onClick={handleDoelUpdate}
-                        >
+                        <Button className="btn menu-btn" onClick={handleNotSameWeightEdit} disabled={isUpdating}>
                             Wijzigingen opslaan
                         </Button>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-center">
-                    <h3>Behaalde doelgewicht</h3>
+                    <h3>Behaalde doelen</h3>
                     <Container className="custom2-table-container">
                         <Table striped bordered hover className="custom2-table">
                             <thead className="header-row">
                             <tr>
                                 <th>Doelgewicht</th>
-                                <th>StartDatum</th>
-                                <th>EindDatum</th>
+                                <th>Start datum</th>
+                                <th>Datum gehaald</th>
                             </tr>
                             </thead>
                             <tbody>
