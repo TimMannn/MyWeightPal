@@ -53,6 +53,29 @@ const Gewicht = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [confettiActive, setConfettiActive] = useState(false);
 
+    
+    const [isGewichtVandaagIngevuld, setIsGewichtVandaagIngevuld] = useState(false);
+    const [isDoelgewichtActief, setIsDoelgewichtActief] = useState(false);
+
+    useEffect(() => {
+        const today = new Date().toLocaleDateString("sv-SE");
+
+        // Check of er vandaag al gewicht is ingevoerd
+        const existingWeight = data.find(item =>
+            new Date(item.datum).toLocaleDateString("sv-SE") === today
+        );
+        setIsGewichtVandaagIngevuld(!!existingWeight);
+
+        // Check of er een actief doelgewicht is
+        if (dataDoelGewicht.length > 0) {
+            const laatsteDoel = dataDoelGewicht[dataDoelGewicht.length - 1];
+            setIsDoelgewichtActief(laatsteDoel.datumbehaald === null);
+        } else {
+            setIsDoelgewichtActief(false);
+        }
+    }, [data, dataDoelGewicht]);
+
+
     const [animateHinge, setAnimateHinge] = useState(false);
     
     const handleAnnuleerClick = () => {
@@ -519,10 +542,10 @@ const Gewicht = () => {
             <Container fluid>
                 <div className="gewichttoevoegen">
                     <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
-                        Gewicht toevoegen <IoIosAddCircle />
+                        {isGewichtVandaagIngevuld ? "Gewicht bewerken" : "Gewicht toevoegen"} <IoIosAddCircle />
                     </Button>
                     <Button className="btn doelgewichttoevoegen-btn" onClick={handleExistingDoelgewichtCheck}>
-                        Doelgewicht toevoegen <IoIosAddCircle />
+                        {isDoelgewichtActief ? "Doelgewicht bewerken" : "Doelgewicht toevoegen"} <IoIosAddCircle />
                     </Button>
                 </div>
             </Container>
@@ -531,7 +554,7 @@ const Gewicht = () => {
             <Container fluid>
                 <br />
                 <div className={`animate__animated ${animationClass}`}>
-                    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doel gewicht: {dataDoelGewicht.length > 0
+                    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doelgewicht: {dataDoelGewicht.length > 0
                         ? `${dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht} kg`
                         : "Er is nog geen doelgewicht ingesteld"}
                     </h3>
