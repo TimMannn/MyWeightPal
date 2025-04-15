@@ -28,3 +28,12 @@ jobs:
 
       - name: Build project
         run: dotnet build --no-restore
+
+      - name: Run unit tests
+        run: dotnet test --no-build --logger "trx;LogFileName=test_results.trx"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
