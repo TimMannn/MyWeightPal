@@ -1,0 +1,15 @@
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.csproj.AssemblyReference.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.GeneratedMSBuildEditorConfig.editorconfig
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.AssemblyInfoInputs.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.AssemblyInfo.cs
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.csproj.CoreCompileInputs.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.sourcelink.json
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/bin/Debug/net8.0/BLL.deps.json
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/bin/Debug/net8.0/BLL.runtimeconfig.json
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/bin/Debug/net8.0/BLL.dll
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/bin/Debug/net8.0/BLL.pdb
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.dll
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/refint/BLL.dll
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.pdb
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/BLL.genruntimeconfig.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/Debug/net8.0/ref/BLL.dll
