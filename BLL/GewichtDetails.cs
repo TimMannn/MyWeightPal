@@ -22,4 +22,4 @@ public class GewichtDetails
     public double Gewicht { get; set; }
 
     [Required] public DateTime Datum { get; set; }
-}
+} 
