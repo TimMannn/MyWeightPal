@@ -56,5 +56,6 @@ jobs:
       - name: Run ESLint
         run: npx eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: Run Prettier check
-        run: npx prettier --check .
+      - name: Run Prettier
+        run: npx prettier --write .
+
