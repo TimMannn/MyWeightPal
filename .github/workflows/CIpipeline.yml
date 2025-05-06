@@ -11,7 +11,7 @@ on:
       - development
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,13 +32,13 @@ jobs:
       - name: Run unit tests
         run: dotnet test --no-restore --no-build --verbosity normal
 
-  lint-frontend:
+  frontend:
     name: Lint Frontend
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./Frontend
 
     steps:
       - name: Checkout repository
