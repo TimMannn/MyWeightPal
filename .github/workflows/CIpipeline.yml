@@ -2,13 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - development
+    branches: [main, development]
   pull_request:
-    branches:
-      - main
-      - development
+    branches: [main, development]
 
 jobs:
   build:
@@ -18,11 +14,35 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0'
+
+      - name: Setup Java for SonarCloud
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+
+      - name: Install dotnet-sonarscanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Begin SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet-sonarscanner begin \
+            /k:"TimMannn_MyWeightPal" \
+            /o:"timmannn" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -30,21 +50,14 @@ jobs:
       - name: Build project
         run: dotnet build --no-restore
 
-      - name: Run unit tests and collect code coverage
-        run: |
-          dotnet test --no-restore --no-build --collect:"XPlat Code Coverage"
+      - name: Run tests and collect coverage
+        run: dotnet test --no-restore --no-build --collect:"XPlat Code Coverage"
 
-      - name: Install SonarScanner
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-
-      - name: Analyze with SonarCloud
+      - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          dotnet-sonarscanner begin /k:"TimMannn_MyWeightPal" /o:"timmannn" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
-          dotnet build
-          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
 
   lint-frontend:
     name: Frontend
