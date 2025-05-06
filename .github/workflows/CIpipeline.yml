@@ -24,14 +24,49 @@ jobs:
         with:
           dotnet-version: '8.0'
 
+      - name: Setup SonarCloud Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"TimMannn_MyWeightPal" \
+            /o:"timmannn" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vstest.reportsPath="**/TestResults/*.xml" \
+            /d:sonar.coverageReportPaths="coverage.opencover.xml"
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build project
         run: dotnet build --no-restore
 
-      - name: Run unit tests
-        run: dotnet test --no-restore --no-build --verbosity normal
+      - name: Run unit tests with coverage
+        run: |
+          dotnet test --no-restore --no-build \
+            --collect:"XPlat Code Coverage" \
+            --results-directory TestResults
+
+      - name: Convert coverage to OpenCover format
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
+        with:
+          reports: '**/TestResults/**/coverage.cobertura.xml'
+          targetdir: 'coverage-report'
+          reporttypes: 'HtmlInline;Cobertura'
+          toolpath: 'reportgenerator'
+
+      - name: Move Cobertura report to expected location
+        run: |
+          cp coverage-report/Cobertura.xml coverage.opencover.xml
+
+      - name: End SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   lint-frontend:
     name: Frontend
@@ -58,4 +93,3 @@ jobs:
 
       - name: Run Prettier
         run: npx prettier --write .
-
