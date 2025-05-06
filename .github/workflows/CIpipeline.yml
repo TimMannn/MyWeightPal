@@ -33,7 +33,6 @@ jobs:
       - name: Run unit tests and collect code coverage
         run: |
           dotnet test --no-restore --no-build --collect:"XPlat Code Coverage"
-          reportgenerator -reports:**/coverage.cobertura.xml -targetdir:coveragereport -reporttypes:Html
 
       - name: Install SonarScanner
         run: |
