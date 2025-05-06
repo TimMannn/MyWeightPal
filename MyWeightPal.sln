@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{1753A58F-98AC-49AE-AAA0-F2F86466B7F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testen", "Testen\Testen.csproj", "{0A81157E-95CF-4F1E-868D-5F73852A55CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{1753A58F-98AC-49AE-AAA0-F2F86466B7F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1753A58F-98AC-49AE-AAA0-F2F86466B7F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1753A58F-98AC-49AE-AAA0-F2F86466B7F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A81157E-95CF-4F1E-868D-5F73852A55CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A81157E-95CF-4F1E-868D-5F73852A55CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A81157E-95CF-4F1E-868D-5F73852A55CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A81157E-95CF-4F1E-868D-5F73852A55CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -4,14 +4,14 @@
     "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj": {}
   },
   "projects": {
-    "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj": {
+    "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj",
-        "projectName": "DAL",
-        "projectPath": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj",
+        "projectUniqueName": "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/BLL.csproj",
+        "projectName": "BLL",
+        "projectPath": "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/BLL.csproj",
         "packagesPath": "/Users/timverbakel/.nuget/packages/",
-        "outputPath": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/obj/",
+        "outputPath": "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/timverbakel/.nuget/NuGet/NuGet.Config"
@@ -38,6 +38,108 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj",
+        "projectName": "DAL",
+        "projectPath": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj",
+        "packagesPath": "/Users/timverbakel/.nuget/packages/",
+        "outputPath": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/timverbakel/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/BLL.csproj": {
+                "projectPath": "/Users/timverbakel/RiderProjects/MyWeightPal/BLL/BLL.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

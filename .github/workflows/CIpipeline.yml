@@ -11,7 +11,8 @@ on:
       - development
 
 jobs:
-  build:
+  backend:
+    name: Backend
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +24,63 @@ jobs:
         with:
           dotnet-version: '8.0'
 
+      - name: Setup Java (required for SonarCloud)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Install SonarCloud scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarCloud analysis
+        run: |
+          dotnet-sonarscanner begin /k:"TimMannn_MyWeightPal" /o:"timmannn" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage/coverage.cobertura.xml"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build project
         run: dotnet build --no-restore
+
+      - name: Run tests with coverage
+        run: dotnet test --no-restore --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Move coverage report
+        run: |
+          mkdir -p coverage
+          cp $(find . -type f -name 'coverage.cobertura.xml') ./coverage/coverage.cobertura.xml
+
+      - name: End SonarCloud analysis
+        run: dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+
+      - name: Run Prettier
+        run: npx prettier --write .
+        

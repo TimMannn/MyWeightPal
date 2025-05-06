@@ -1,0 +1,179 @@
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Roboto", sans-serif;
+}
+
+.custom-table-container {
+    max-height: 352px; /* Max hoogte instellen */
+    overflow-y: auto; /* Zorgt ervoor dat het kan scrollen */
+    width: 60%;
+}
+
+table.custom-table {
+    width: 100%; /* Zorgt ervoor dat de tabel de volledige breedte van de container gebruikt */
+    margin-top: 1rem;
+    border-collapse: collapse;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-table thead {
+    position: sticky;
+    top: 0px;
+    z-index: 2;
+    background-color: #fff;
+}
+
+table.custom-table th,
+table.custom-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+table.custom-table th {
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 2; 
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1); /* Dit zorgt voor een subtiele schaduw boven de tabel */
+}
+
+table.custom-table th:nth-child(1) {
+    width: 30%;
+}
+
+table.custom-table th:nth-child(2) {
+    width: 30%;
+}
+
+table.custom-table th:nth-child(3) {
+    width: 5%;
+}
+
+table.custom-table td {
+    background-color: #fff;
+}
+
+
+button.logout-btn {
+    background-color: #3399ff;
+    border-color: #66b2ff;
+    color: #fff;
+    width: 100px;
+    margin: 5px;
+}
+
+button.logout-btn:hover {
+    background-color: #3399ff;
+    border-color: #3399ff;
+}
+
+.navbar {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+button {
+    padding: 0.5rem 0.75rem;
+    margin: 0.2rem;
+    text-align: center;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    width: 100px;
+    vertical-align: middle;
+}
+
+button.gewichttoevoegen-btn {
+    background-color: #3399ff;
+    border: none;
+    width: 185px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    float: right;
+}
+
+button.gewichttoevoegen-btn:hover {
+    background-color: #0056b3;
+}
+
+button.doelgewichttoevoegen-btn {
+    background-color: #33cc66;
+    border: none;
+    width: 215px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    float: right;
+}
+
+button.doelgewichttoevoegen-btn:hover {
+    background-color: #006633;
+}
+
+button.edit-btn {
+    background-color: #3399ff;
+    border: none;
+    width: 40px;
+    margin: 1px;
+    height: 40px;
+    vertical-align: center;
+    text-align: center;
+}
+
+button.delete-btn {
+    background-color: #dc3545;
+    border: none;
+    width: 40px;
+    margin: 1px;
+    height: 40px;
+    vertical-align: center;
+    text-align: center;
+}
+
+button.delete-btn:hover {
+    background-color: #c82333;
+}
+
+button.deletemargin-btn {
+    background-color: #dc3545;
+    border: none;
+    width: 40px;
+    margin-top: 22px;
+    margin-right: 8px;
+    height: 40px;
+    vertical-align: center;
+    text-align: center;
+}
+
+button.deletemargin-btn:hover {
+    background-color: #c82333;
+}
+
+.menu-footer {
+    justify-content: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+button.menu-btn {
+    text-align: center;
+    width: 200px;
+    margin: 10px;
+}
