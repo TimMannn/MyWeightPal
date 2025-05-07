@@ -29,6 +29,14 @@ jobs:
       - name: Run tests and collect coverage
         run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutput=./TestResults/Coverage/ /p:CoverletOutputFormat=cobertura
 
+
+      - name: Check coverage file exists
+        run: ls -R TestResults
+
+      - name: Print coverage file
+        run: cat TestResults/Coverage/coverage.cobertura.xml || echo "Bestand niet gevonden"
+
+
       - name: Run SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
