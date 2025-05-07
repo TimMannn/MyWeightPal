@@ -29,15 +29,10 @@ jobs:
       - name: Run tests and collect coverage
         run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutput=./TestResults/Coverage/ /p:CoverletOutputFormat=cobertura
 
-
       - name: Check coverage file exists
         run: ls -R TestResults
 
-      - name: Print coverage file
-        run: cat TestResults/Coverage/coverage.cobertura.xml || echo "Bestand niet gevonden"
-
-
-      - name: Run SonarCloud scan
+      - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -46,7 +41,8 @@ jobs:
             -Dsonar.projectKey=TimMannn_MyWeightPal
             -Dsonar.organization=timmannn
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.cs.opencover.reportsPaths=./TestResults/Coverage/coverage.cobertura.xml
+            -Dsonar.cs.opencover.reportsPaths=TestResults/**/*.cobertura.xml
+
 
   lint-frontend:
     name: Frontend
