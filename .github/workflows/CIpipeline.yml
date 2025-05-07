@@ -41,8 +41,8 @@ jobs:
             -Dsonar.projectKey=TimMannn_MyWeightPal
             -Dsonar.organization=timmannn
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.cs.opencover.reportsPaths=TestResults/**/*.cobertura.xml
-
+            -Dsonar.cs.opencover.reportsPaths=TestResults/**/*.xml
+            -Dsonar.tests=Testen
 
   lint-frontend:
     name: Frontend
