@@ -29,9 +29,6 @@ jobs:
       - name: Run tests and collect coverage
         run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
-      - name: List coverage output
-        run: ls -R coverage
-
       - name: List coverage output2
         run: ls -lah ./coverage
 
