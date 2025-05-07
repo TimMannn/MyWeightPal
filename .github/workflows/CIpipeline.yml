@@ -27,10 +27,19 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run tests and collect coverage
-        run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutput=./TestResults/Coverage/ /p:CoverletOutputFormat=cobertura
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
-      - name: Check coverage file exists
-        run: ls -R TestResults
+      - name: Locate coverage file
+        id: coverage
+        run: |
+          echo "Searching for coverage.cobertura.xml file..."
+          file_path=$(find ./TestResults -type f -name 'coverage.cobertura.xml' | head -n 1)
+          echo "Found: $file_path"
+          if [ -z "$file_path" ]; then
+            echo "::error::coverage.cobertura.xml not found"
+            exit 1
+          fi
+          echo "coverage_path=$file_path" >> $GITHUB_OUTPUT
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
@@ -41,7 +50,7 @@ jobs:
             -Dsonar.projectKey=TimMannn_MyWeightPal
             -Dsonar.organization=timmannn
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.cs.opencover.reportsPaths=TestResults/**/*.xml
+            -Dsonar.cs.opencover.reportsPaths=${{ steps.coverage.outputs.coverage_path }}
 
   lint-frontend:
     name: Frontend
