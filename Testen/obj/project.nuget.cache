@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "RUK7fS+lH91XpzHUURYhfxOMLFZHvdTP3LcukvzmHF0YNMksxsv6VGM4v7YUiGeX/bieu7JBAmpHF8Ds77Y/oA==",
+  "dgSpecHash": "YEDtErWu3xjyyc+hzxksgZP3YiZ+SNrvkYIxvy7zwEOyXLfKxTMWiIRTZwLGnaHtbK6nImjK99JpWyM0SDJSVw==",
   "success": true,
   "projectFilePath": "/Users/timverbakel/RiderProjects/MyWeightPal/Testen/Testen.csproj",
   "expectedPackageFiles": [
     "/Users/timverbakel/.nuget/packages/castle.core/5.1.1/castle.core.5.1.1.nupkg.sha512",
-    "/Users/timverbakel/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
+    "/Users/timverbakel/.nuget/packages/coverlet.collector/6.0.2/coverlet.collector.6.0.2.nupkg.sha512",
     "/Users/timverbakel/.nuget/packages/microsoft.codecoverage/17.6.0/microsoft.codecoverage.17.6.0.nupkg.sha512",
     "/Users/timverbakel/.nuget/packages/microsoft.entityframeworkcore/8.0.2/microsoft.entityframeworkcore.8.0.2.nupkg.sha512",
     "/Users/timverbakel/.nuget/packages/microsoft.entityframeworkcore.abstractions/8.0.2/microsoft.entityframeworkcore.abstractions.8.0.2.nupkg.sha512",
