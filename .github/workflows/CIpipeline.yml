@@ -35,6 +35,9 @@ jobs:
       - name: Check if coverage file exists
         run: ls -lah ./coverage
 
+      - name: List coverage output
+        run: ls -R coverage
+
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
