@@ -26,12 +26,11 @@ jobs:
       - name: Build project
         run: dotnet build --no-restore
 
-      - name: Ensure coverage directory exists
-        run: mkdir -p ./coverage
-
       - name: Run tests and collect coverage
-        run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.opencover.xml /p:CoverletOutputFormat=opencover
-      
+        run: |
+          dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.opencover.xml /p:CoverletOutputFormat=opencover
+          ls -lah ./coverage
+
       - name: Check if coverage file exists
         run: ls -lah ./coverage
 
