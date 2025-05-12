@@ -84,7 +84,7 @@ jobs:
 
       # Build & Push Backend
       - name: Build Backend Docker image
-        run: docker build ./Backend/WebAPI -f ./Backend/WebAPI/Dockerfile -t timverbakel/myweightpal-backend:latest
+        run: docker build ./WebAPI -f ./WebAPI/Dockerfile -t timverbakel/myweightpal-backend:latest
 
       - name: Push Backend Docker image
         run: docker push timverbakel/myweightpal-backend:latest
