@@ -14,9 +14,9 @@ import Confetti from './Confetti';
 
 
 
-
-
 const Gewicht = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7209";
+
     const [data, setData] = useState([]);
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
     const [chartData, setChartData] = useState({ series: [], options: {} });
@@ -128,7 +128,7 @@ const Gewicht = () => {
 
     const getData = async () => {
         try {
-            const result = await axios.get("https://localhost:7209/api/Gewicht/gewicht");
+            const result = await axios.get(`${apiUrl}/api/Gewicht/gewicht`);
             console.log("Data responds: ", result.data);
             setData(result.data);
             return result.data;
@@ -139,7 +139,7 @@ const Gewicht = () => {
     };
 
     const getDataDoelGewicht = () => {
-        axios.get("https://localhost:7209/api/Gewicht/doelgewicht")
+        axios.get(`${apiUrl}/api/Gewicht/doelgewicht`)
             .then((result) => {
                 console.log("DataDoelGewicht responds: ", result.data);
                 setDataDoelGewicht(result.data);
@@ -288,7 +288,7 @@ const Gewicht = () => {
         };
 
         axios
-            .post("https://localhost:7209/api/Gewicht/gewicht", axiosData)
+            .post(`${apiUrl}/api/Gewicht/gewicht`, axiosData)
             .then((response) => {
                 if (response.status === 200) {
                     getData();
@@ -336,7 +336,7 @@ const Gewicht = () => {
         };
 
         axios
-            .put(`https://localhost:7209/api/Gewicht/doelgewicht${laatsteDoel.id}`, data)
+            .put(`${apiUrl}/api/Gewicht/doelgewicht${laatsteDoel.id}`, data)
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -363,7 +363,7 @@ const Gewicht = () => {
         };
 
         axios
-            .post("https://localhost:7209/api/Gewicht/doelgewicht", data)
+            .post(`${apiUrl}/api/Gewicht/doelgewicht`, data)
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -387,7 +387,7 @@ const Gewicht = () => {
     const handleEdit = (ID) => {
         handleShowEdit();
         axios
-            .get(`https://localhost:7209/api/Gewicht/gewicht${ID}`)
+            .get(`${apiUrl}/api/Gewicht/gewicht${ID}`)
             .then((result) => {
                 console.log(result.data);
                 setEditGewicht(result.data.gewicht);
@@ -411,7 +411,7 @@ const Gewicht = () => {
         }
 
         try {
-            const response = await axios.put(`https://localhost:7209/api/Gewicht/gewicht${editID}`, dataToSend);
+            const response = await axios.put(`${apiUrl}/api/Gewicht/gewicht${editID}`, dataToSend);
 
             if (response.status === 200) {
                 const nieuweData = await getData();
@@ -457,7 +457,7 @@ const Gewicht = () => {
         };
 
         axios
-            .put(`https://localhost:7209/api/Gewicht/doelgewicht${editDoelID}`, data)
+            .put(`${apiUrl}/api/Gewicht/doelgewicht${editDoelID}`, data)
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -488,7 +488,7 @@ const Gewicht = () => {
         
         if (window.confirm(`Weet je zeker dat je het gewicht wilt verwijderen?`)) {
             axios
-                .delete(`https://localhost:7209/api/Gewicht/gewicht${ID}`)
+                .delete(`${apiUrl}/api/Gewicht/gewicht${ID}`)
                 .then((result) => {
                     if (result.status === 200) {
                         clear();
@@ -512,7 +512,7 @@ const Gewicht = () => {
 
         if (window.confirm(`Weet je zeker dat je het doelgewicht wilt verwijderen?`)) {
             axios
-                .delete(`https://localhost:7209/api/Gewicht/doelgewicht${ID}`)
+                .delete(`${apiUrl}/api/Gewicht/doelgewicht${ID}`)
                 .then((result) => {
                     if (result.status === 200) {
                         clear();
