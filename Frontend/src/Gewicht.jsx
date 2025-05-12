@@ -15,7 +15,10 @@ import Confetti from './Confetti';
 
 
 const Gewicht = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || "https://localhost:7209";
+
+    //const apiUrl = "http://localhost:5001";
+    const apiUrl = import.meta.env.VITE_API_URL;
+
 
     const [data, setData] = useState([]);
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
