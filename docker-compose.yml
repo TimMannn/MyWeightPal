@@ -2,23 +2,30 @@ version: "3.8"
 
 services:
   backend:
-    build:
-      context: .
-      dockerfile: WebAPI/Dockerfile
+    image: timverbakel/myweightpal-backend:latest
     ports:
       - "5001:8080"
     networks:
       - mynetwork
+    restart: always
 
   frontend:
-    build:
-      context: ./Frontend
-      args:
-        VITE_API_URL: http://localhost:5001
+    image: timverbakel/myweightpal-frontend:latest
     ports:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - mynetwork
+    restart: always
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 60
     networks:
       - mynetwork
 

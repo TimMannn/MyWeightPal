@@ -1,4 +1,4 @@
-name: CI
+name: CI / CD
 
 on:
   push:
@@ -40,7 +40,6 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.cs.opencover.reportsPaths=Testen/coverage/coverage.opencover.xml
 
-
   lint-frontend:
     name: Frontend
     runs-on: ubuntu-latest
@@ -67,7 +66,6 @@ jobs:
       - name: Run Prettier
         run: npx prettier --write .
 
-
   docker:
     name: Docker Build & Push
     runs-on: ubuntu-latest
@@ -82,16 +80,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build & Push Backend
       - name: Build Backend Docker image
         run: docker build -f WebAPI/Dockerfile -t timverbakel/myweightpal-backend:latest .
 
       - name: Push Backend Docker image
         run: docker push timverbakel/myweightpal-backend:latest
 
-      # Build & Push Frontend
       - name: Build Frontend Docker image
-        run: docker build ./Frontend -f ./Frontend/Dockerfile -t timverbakel/myweightpal-frontend:latest
+        run: |
+          docker build ./Frontend \
+            -f ./Frontend/Dockerfile \
+            --build-arg VITE_API_URL=http://localhost:5001 \
+            -t timverbakel/myweightpal-frontend:latest
 
       - name: Push Frontend Docker image
         run: docker push timverbakel/myweightpal-frontend:latest
