@@ -533,7 +533,7 @@ const Gewicht = () => {
             <ToastContainer />
             <Navbar bg="primary" variant="dark" expand="lg">
                 <Container>
-                    <Navbar.Brand href="#home">MyWeightPal</Navbar.Brand>
+                    <Navbar.Brand href="#home">MyWeightPall</Navbar.Brand>
                 </Container>
             </Navbar>
             
