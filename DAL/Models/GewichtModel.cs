@@ -14,4 +14,7 @@ public class GewichtModel
 
     [Required]
     public DateTime datumToegevoegd { get; set; } = DateTime.Now.Date;
+    
+    [Required]
+    public string UserId { get; set; } = null!;
 }

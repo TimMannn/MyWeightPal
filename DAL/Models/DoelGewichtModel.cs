@@ -16,4 +16,7 @@ public class DoelGewichtModel
     public DateTime datumToegevoegd { get; set; } = DateTime.Now.Date;
     
     public DateTime? datumBehaald { get; set; }
+    
+    [Required]
+    public string UserId { get; set; } = null!;
 }

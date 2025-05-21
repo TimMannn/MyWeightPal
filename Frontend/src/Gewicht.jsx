@@ -10,8 +10,8 @@ import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
+import { FaSignOutAlt } from "react-icons/fa";
 import Confetti from './Confetti';
-
 
 
 const Gewicht = () => {
@@ -127,19 +127,33 @@ const Gewicht = () => {
     }, [data, dataDoelGewicht]);
 
     const getData = async () => {
-        try {
-            const result = await axios.get(`${apiUrl}/api/Gewicht/gewicht`);
-            console.log("Data responds: ", result.data);
-            setData(result.data);
-            return result.data;
-        } catch (error) {
-            console.error("Error met ophalen van gewicht:", error);
-            toast.error("Gewicht ophalen mislukt!");
-        }
+        const token = localStorage.getItem("token");
+        console.log("Sending Token:", token);
+        axios
+            .get(`${apiUrl}/api/Gewicht/gewicht`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((result) => {
+                console.log(result.data);
+                setData(result.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching gewicht:", error);
+                toast.error("Failed to fetch gewicht");
+            });
     };
 
+
     const getDataDoelGewicht = () => {
-        axios.get(`${apiUrl}/api/Gewicht/doelgewicht`)
+        const token = localStorage.getItem("token");
+        console.log("Sending DoelToken:", token);
+        axios.get(`${apiUrl}/api/Gewicht/doelgewicht`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then((result) => {
                 console.log("DataDoelGewicht responds: ", result.data);
                 setDataDoelGewicht(result.data);
@@ -177,7 +191,7 @@ const Gewicht = () => {
                 {
                     name: "Gewicht",
                     data: data.map(item => ({
-                        x: new Date(item.datum).toLocaleDateString("sv-SE"), // Oplossing voor UTC probleem
+                        x: new Date(item.datum).toLocaleDateString("sv-SE"),
                         y: item.gewicht
                     }))
                 }
@@ -282,29 +296,35 @@ const Gewicht = () => {
     };
 
     const handleSave = () => {
+        const token = localStorage.getItem("token");
+
         const axiosData = {
             gewicht: Gewicht,
-            datum: new Date().toLocaleDateString("sv-SE")
+            datum: new Date().toLocaleDateString("sv-SE"),
         };
 
         axios
-            .post(`${apiUrl}/api/Gewicht/gewicht`, axiosData)
+            .post(`${apiUrl}/api/Gewicht/gewicht`, axiosData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 if (response.status === 200) {
                     getData();
                     setGewicht("");
                     handleCloseAdd();
                     toast.success("Gewicht toegevoegd!");
-                    
+
                     if (dataDoelGewicht.length > 0 && data.length > 0) {
                         const huidigGewicht = parseFloat(Gewicht);
                         const vorigeGewicht = parseFloat(data[data.length - 1].gewicht);
                         const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
-                        
+
                         const doelIsAankomen = doelGewicht > vorigeGewicht;
-                        
+
                         const doelBehaald = doelIsAankomen
-                            ? huidigGewicht >= doelGewicht 
+                            ? huidigGewicht >= doelGewicht
                             : huidigGewicht <= doelGewicht;
 
                         if (doelBehaald) {
@@ -325,7 +345,9 @@ const Gewicht = () => {
             });
     };
 
+
     const handleDoelGewichtBehaald = () => {
+        const token = localStorage.getItem("token");
         const laatsteDoel = dataDoelGewicht[dataDoelGewicht.length - 1];
         
         const huidigeDatum = new Date().toLocaleDateString("sv-SE");
@@ -336,7 +358,11 @@ const Gewicht = () => {
         };
 
         axios
-            .put(`${apiUrl}/api/Gewicht/doelgewicht${laatsteDoel.id}`, data)
+            .put(`${apiUrl}/api/Gewicht/doelgewicht/${laatsteDoel.id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -357,13 +383,19 @@ const Gewicht = () => {
 
 
     const handleDoelSave = () => {
+        const token = localStorage.getItem("token");
+
         const data = {
             doelgewicht: DoelGewicht,
             datum: new Date().toLocaleDateString("sv-SE")
         };
 
         axios
-            .post(`${apiUrl}/api/Gewicht/doelgewicht`, data)
+            .post(`${apiUrl}/api/Gewicht/doelgewicht`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -381,13 +413,19 @@ const Gewicht = () => {
                 setIsUpdating(false);
             });
     };
-    
-    
-     
+
+
+
     const handleEdit = (ID) => {
         handleShowEdit();
+        const token = localStorage.getItem("token");
+
         axios
-            .get(`${apiUrl}/api/Gewicht/gewicht${ID}`)
+            .get(`${apiUrl}/api/Gewicht/gewicht/${ID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((result) => {
                 console.log(result.data);
                 setEditGewicht(result.data.gewicht);
@@ -396,10 +434,13 @@ const Gewicht = () => {
             .catch((error) => {
                 console.error("Error bij het ophalen van gewicht:", error);
                 toast.error("Gewicht niet gevonden!");
-            })
+            });
     };
 
+
     const handleUpdate = async () => {
+        const token = localStorage.getItem("token");
+
         const dataToSend = {
             id: editID,
             gewicht: editGewicht,
@@ -411,53 +452,78 @@ const Gewicht = () => {
         }
 
         try {
-            const response = await axios.put(`${apiUrl}/api/Gewicht/gewicht${editID}`, dataToSend);
+            const response = await axios.put(
+                `${apiUrl}/api/Gewicht/gewicht/${editID}`,
+                dataToSend,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
             if (response.status === 200) {
-                const nieuweData = await getData();
-
+                toast.success("Gewicht is succesvol bewerkt!");
                 setEditGewicht("");
                 setEditID("");
                 handleCloseEdit();
-                toast.success("Gewicht is succesvol bewerkt!");
 
-                if (dataDoelGewicht.length > 0 && nieuweData.length > 1) {
-                    const huidigGewicht = parseFloat(editGewicht);
-                    const vorigeGewicht = parseFloat(nieuweData[nieuweData.length - 2].gewicht);
-                    const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
+                try {
+                    const nieuweData = await getData();
 
-                    const doelIsAankomen = doelGewicht > vorigeGewicht;
+                    if (
+                        Array.isArray(nieuweData) &&
+                        dataDoelGewicht.length > 0 &&
+                        nieuweData.length > 1
+                    ) {
+                        const huidigGewicht = parseFloat(editGewicht);
+                        const vorigeGewicht = parseFloat(nieuweData[nieuweData.length - 2].gewicht);
+                        const doelGewicht = parseFloat(dataDoelGewicht[dataDoelGewicht.length - 1].doelgewicht);
 
-                    const doelBehaald = doelIsAankomen
-                        ? huidigGewicht >= doelGewicht
-                        : huidigGewicht <= doelGewicht;
+                        const doelIsAankomen = doelGewicht > vorigeGewicht;
 
-                    if (doelBehaald) {
-                        setConfettiActive(true);
-                        handleDoelGewichtBehaald();
-                        setTimeout(() => setConfettiActive(false), 10000);
+                        const doelBehaald = doelIsAankomen
+                            ? huidigGewicht >= doelGewicht
+                            : huidigGewicht <= doelGewicht;
+
+                        if (doelBehaald) {
+                            setConfettiActive(true);
+                            handleDoelGewichtBehaald();
+                            setTimeout(() => setConfettiActive(false), 10000);
+                        }
                     }
+                } catch (dataError) {
+                    console.error("Error bij ophalen van nieuwe data:", dataError);
+                    toast.error("Gewicht bewerkt, maar ophalen van nieuwe data is mislukt.");
                 }
+
             } else {
                 toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
             }
         } catch (error) {
-            console.error("Error details:", error.response);
+            console.error("Error details:", error?.response || error);
             const errorMessages = error.response?.data?.messages || [
                 error.response?.data?.message || "Error updating gewicht",
             ];
             errorMessages.forEach((msg) => toast.error(msg));
         }
     };
+    
 
     const handleDoelUpdate = () => {
+        const token = localStorage.getItem("token");
+
         const data = {
             id: editDoelID,
             doelgewicht: editDoelGewicht,
         };
 
         axios
-            .put(`${apiUrl}/api/Gewicht/doelgewicht${editDoelID}`, data)
+            .put(`${apiUrl}/api/Gewicht/doelgewicht/${editDoelID}`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 if (response.status === 200) {
                     getDataDoelGewicht();
@@ -479,16 +545,22 @@ const Gewicht = () => {
                 setIsUpdating(false);
             });
     };
-    
+
     const handleDelete = (ID) => {
+        const token = localStorage.getItem("token");
+
         const clear = () => {
             setEditGewicht("");
             setEditID("");
         };
-        
+
         if (window.confirm(`Weet je zeker dat je het gewicht wilt verwijderen?`)) {
             axios
-                .delete(`${apiUrl}/api/Gewicht/gewicht${ID}`)
+                .delete(`${apiUrl}/api/Gewicht/gewicht/${ID}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
                 .then((result) => {
                     if (result.status === 200) {
                         clear();
@@ -499,12 +571,14 @@ const Gewicht = () => {
                 })
                 .catch((error) => {
                     toast.error("Gewicht verwijderen mislukt!");
-                    console.log(error);
+                    console.error("Error bij verwijderen:", error);
                 });
         }
     };
 
     const handleDoelDelete = (ID) => {
+        const token = localStorage.getItem("token");
+
         const clear = () => {
             setEditDoelGewicht("");
             setEditDoelID("");
@@ -512,7 +586,11 @@ const Gewicht = () => {
 
         if (window.confirm(`Weet je zeker dat je het doelgewicht wilt verwijderen?`)) {
             axios
-                .delete(`${apiUrl}/api/Gewicht/doelgewicht${ID}`)
+                .delete(`${apiUrl}/api/Gewicht/doelgewicht/${ID}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
                 .then((result) => {
                     if (result.status === 200) {
                         clear();
@@ -528,6 +606,32 @@ const Gewicht = () => {
         }
     };
 
+    const handleLogout = () => {
+        const token = localStorage.getItem("token");
+        axios
+            .post(
+                `${apiUrl}/api/Account/logout`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            )
+            .then((response) => {
+                if (response.status === 200) {
+                    localStorage.removeItem("token");
+                    navigate("/Login");
+                } else {
+                    toast.error("Error logging out");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                toast.error("Error logging out");
+            });
+    };
+
     return (
         <Fragment>
             <ToastContainer />
@@ -535,6 +639,13 @@ const Gewicht = () => {
                 <Container>
                     <Navbar.Brand href="#home">MyWeightPal</Navbar.Brand>
                 </Container>
+                <Button
+                    variant="outline-light"
+                    className="logout-btn"
+                    onClick={handleLogout}
+                >
+                    Logout <FaSignOutAlt />
+                </Button>
             </Navbar>
             
             <Confetti show={confettiActive} />
