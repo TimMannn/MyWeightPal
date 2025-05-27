@@ -21,6 +21,12 @@ const Gewicht = () => {
     const [dataDoelGewicht, setDataDoelGewicht] = useState([]);
     const [chartData, setChartData] = useState({ series: [], options: {} });
     const navigate = useNavigate();
+
+    const [BMIResult, setBMIResult] = useState(null);
+    const [heightCm, setHeightCm] = useState("");
+    const [showBMI, setShowBMI] = useState(false);
+    const handleCloseBMI = () => setShowBMI(false);
+    const handleShowBMI = () => setShowBMI(true);
     
     
     const [Gewicht, setGewicht] = useState("");
@@ -634,6 +640,60 @@ const Gewicht = () => {
             });
     };
 
+    const handleSubmitBMI = async () => {
+        const height = Number(heightCm);
+
+        const laatsteGewicht = data.length > 0
+            ? data[data.length - 1].gewicht
+            : null;
+
+        if (!laatsteGewicht || !height) {
+            toast.error("Vul je lengte in en zorg dat er een gewicht beschikbaar is.");
+            return;
+        }
+
+        console.log("Height = ", height);
+        console.log("Weight = ", laatsteGewicht);
+        
+        const result = await fetchBMI(laatsteGewicht, height);
+        if (result) {
+            console.log ('Totale result', result);
+
+            setBMIResult({
+                bmi: result.bmi,
+                category: result.bmiCategoryForAdults?.category,
+                normalRange: result.bmiCategoryForAdults?.normalRange,
+                range: result.bmiCategoryForAdults?.range
+            });
+        }
+    };
+
+
+
+    async function fetchBMI(weightKg, heightCm) {
+        const url = `https://smart-body-mass-index-calculator-bmi.p.rapidapi.com/api/BMI/metric`;
+
+        const options = {
+            params: {
+                kg: weightKg,
+                cm: heightCm
+            },
+            headers: {
+                'X-RapidAPI-Key': '1fa9ecab4emshe0ec43545f5da02p161c79jsn1fa64e8f05b0',
+                'X-RapidAPI-Host': 'smart-body-mass-index-calculator-bmi.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await axios.get(url, options);
+            return response.data;
+        } catch (error) {
+            toast.error("Error bij het ophalen van BMI");
+            console.error('Fout bij ophalen van BMI via Axios:', error);
+            return null;
+        }
+    }
+
     return (
         <Fragment>
             <ToastContainer />
@@ -641,6 +701,13 @@ const Gewicht = () => {
                 <Container>
                     <Navbar.Brand href="#home">MyWeightPal</Navbar.Brand>
                 </Container>
+                <Button
+                    variant="outline-light"
+                    className="logout-btn"
+                    onClick={handleShowBMI}
+                >
+                    Bereken BMI
+                </Button>
                 <Button
                     variant="outline-light"
                     className="logout-btn"
@@ -898,6 +965,54 @@ const Gewicht = () => {
                             </tbody>
                         </Table>
                     </Container>
+                </Modal.Footer>
+            </Modal>
+
+            {/*Pop-up BMI*/}
+            <Modal show={showBMI} onHide={handleCloseBMI}>
+                <Modal.Header closeButton>
+                    <Modal.Title>BMI bereken</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Row>
+                        <h6>Voer je lengte in centimeters in!</h6>
+                        <Col>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Voer je lengte in (Cm)"
+                                value={heightCm}
+                                onChange={(e) => setHeightCm(e.target.value)}
+                                min="0"
+                                max="300"
+                                required
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Button className="btn menu-btn" onClick={handleSubmitBMI}>
+                            Bereken BMI
+                        </Button>
+                    </Row>
+                    <Row>
+                        {BMIResult && (
+                            <div className="mt-3 p-3 border rounded bg-light">
+                                <h5>Resultaat</h5>
+                                <p><strong>BMI:</strong> {BMIResult.bmi.toFixed(2)}</p>
+                                <p><strong>Categorie:</strong> {BMIResult.category}</p>
+                                <p><strong>Normaal bereik:</strong> {BMIResult.normalRange}</p>
+                                <p><strong>Bereik:</strong> {BMIResult.range}</p>
+                            </div>
+                        )}
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        className={`animate__animated ${animateHinge ? "animate__hinge animate__slower" : ""}`}
+                        onClick={handleCloseBMI}
+                    >
+                        Sluit
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </Fragment>
