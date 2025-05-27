@@ -11,6 +11,7 @@ import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaSignOutAlt } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 import Confetti from './Confetti';
 
 
@@ -613,32 +614,7 @@ const Gewicht = () => {
                 });
         }
     };
-
-    const handleLogout = () => {
-        const token = localStorage.getItem("token");
-        axios
-            .post(
-                `${apiUrl}/api/Account/logout`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            )
-            .then((response) => {
-                if (response.status === 200) {
-                    localStorage.removeItem("token");
-                    navigate("/Login");
-                } else {
-                    toast.error("Error logging out");
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                toast.error("Error logging out");
-            });
-    };
+    
 
     const handleSubmitBMI = async () => {
         const height = Number(heightCm);
@@ -708,13 +684,15 @@ const Gewicht = () => {
                 >
                     Bereken BMI
                 </Button>
+                
                 <Button
-                    variant="outline-light"
-                    className="logout-btn"
-                    onClick={handleLogout}
+                    variant="light"
+                    className="profile-button"
+                    onClick={() => navigate('/profile')}
                 >
-                    Logout <FaSignOutAlt />
+                    <FaUserAlt size={20} />
                 </Button>
+
             </Navbar>
             
             <Confetti show={confettiActive} />
