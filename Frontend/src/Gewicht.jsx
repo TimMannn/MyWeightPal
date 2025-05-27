@@ -401,6 +401,7 @@ const Gewicht = () => {
                     getDataDoelGewicht();
                     setDoelGewicht("");
                     handleCloseDoelAdd();
+                    toast.success("Doelgewicht toegevoegd!");
                     setAnimationClass("animate__bounceInRight");
                     setIsUpdating(false);
                 } 
@@ -526,6 +527,7 @@ const Gewicht = () => {
             })
             .then((response) => {
                 if (response.status === 200) {
+                    toast.success("Doelgewicht is succesvol bewerkt!");
                     getDataDoelGewicht();
                     setEditDoelGewicht("");
                     setEditDoelID("");
@@ -652,10 +654,10 @@ const Gewicht = () => {
             
             <Container fluid>
                 <div className="gewichttoevoegen">
-                    <Button className="btn gewichttoevoegen-btn" onClick={handleDuplicateCheck}>
+                    <Button className="btn gewichttoevoegen-btn" id="GewichtToevoegenButton" onClick={handleDuplicateCheck}>
                         {isGewichtVandaagIngevuld ? "Gewicht bewerken" : "Gewicht toevoegen"} <IoIosAddCircle />
                     </Button>
-                    <Button className="btn doelgewichttoevoegen-btn" onClick={handleExistingDoelgewichtCheck}>
+                    <Button className="btn doelgewichttoevoegen-btn" id="DoelgewichtToevoegenButton" onClick={handleExistingDoelgewichtCheck}>
                         {isDoelgewichtActief ? "Doelgewicht bewerken" : "Doelgewicht toevoegen"} <IoIosAddCircle />
                     </Button>
                 </div>
@@ -698,7 +700,7 @@ const Gewicht = () => {
                                     <td>{item.gewicht} kg</td>
                                     <td>{new Date(item.datum).toLocaleDateString("nl-NL")}</td> {/* Oplossing voor juiste datumweergave */}
                                     <td>
-                                        <Button className="btn edit-btn" onClick={() => {
+                                        <Button className="btn edit-btn" id="EditPopUp" onClick={() => {
                                             setSelectedItem(item);
                                             handleEdit(item.id);
                                         }}>
