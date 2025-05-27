@@ -8,8 +8,9 @@ import {toast} from "react-toastify";
 
 const Profile = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    
     const navigate = useNavigate();
+    const [data, setData] = useState([]);
+    
 
     const handleLogout = () => {
         const token = localStorage.getItem("token");

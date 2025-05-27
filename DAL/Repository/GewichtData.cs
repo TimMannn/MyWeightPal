@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repository;
 
-public class GewichtData :IGewichtData
+public class GewichtData : IGewichtData
 {
     private readonly AppDbContext _context;
 
@@ -12,7 +12,7 @@ public class GewichtData :IGewichtData
     {
         _context = context;
     }
-    
+
     public async Task<List<GewichtDetails>> GetGewicht(string userId)
     {
         return await _context.Gewichten
@@ -68,10 +68,11 @@ public class GewichtData :IGewichtData
         }
     }
 
-    
-    
-    
-    public async Task<List<DoelGewichtDetails>> GetDoelGewicht(string userId)
+
+
+
+
+public async Task<List<DoelGewichtDetails>> GetDoelGewicht(string userId)
     {
         return await _context.DoelGewichten
             .Where(dgm => dgm.UserId == userId)

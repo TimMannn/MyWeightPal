@@ -22,4 +22,5 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<GewichtModel> Gewichten { get; set; }
     public DbSet<DoelGewichtModel> DoelGewichten { get; set; }
+    public DbSet<UserModel> Users { get; set; }
 }

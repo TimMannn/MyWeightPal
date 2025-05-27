@@ -16,22 +16,45 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(
-                `${apiUrl}/api/Account/register`,
+            // 1. Registreer gebruiker
+            await axios.post(`${apiUrl}/api/Account/register`, {
+                userName,
+                email,
+                password,
+                confirmPassword,
+            });
+
+            // 2. Login direct na registratie
+            const loginResponse = await axios.post(`${apiUrl}/api/Account/login`, {
+                userName,
+                password,
+            });
+
+            const token = loginResponse.data.token;
+            localStorage.setItem("token", token); // Optioneel: ook save userId/username als je dat terugkrijgt
+
+            // 3. Maak profiel aan in jouw eigen UserModel
+            await axios.post(
+                `${apiUrl}/api/User`,
                 {
                     userName,
-                    email,
-                    password,
-                    confirmPassword,
+                    profileImageUrl: null, // Of standaardwaarde
                 },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
-            setMessage(response.data.Result);
-            navigate("/login");
+
+            // 4. Redirect naar gewicht-pagina
+            navigate("/Gewicht");
         } catch (error) {
-            console.error("Error details:", error.response);
-            setMessage("Registration failed");
+            console.error("Fout bij registratie", error);
+            setMessage("Registratie mislukt");
         }
     };
+
     
     return (
         <div className="register-background">

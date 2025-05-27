@@ -62,9 +62,11 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddScoped<IGewichtData, GewichtData>();
 builder.Services.AddScoped<IAccountData, AccountData>();
+builder.Services.AddScoped<IUserData, UserData>();
 
 builder.Services.AddScoped<GewichtService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddHttpContextAccessor();
 
