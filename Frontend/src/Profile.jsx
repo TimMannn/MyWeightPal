@@ -10,7 +10,29 @@ const Profile = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const [data, setData] = useState([]);
-    
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        const token = localStorage.getItem("token");
+        console.log("Sending Token:", token);
+        axios
+            .get(`${apiUrl}/api/User/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((result) => {
+                console.log(result.data);
+                setData(result.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching Users Data:", error);
+                toast.error("Failed to fetch User");
+            });
+    };
 
     const handleLogout = () => {
         const token = localStorage.getItem("token");
@@ -59,7 +81,7 @@ const Profile = () => {
             
             <div className="profile-container">
                 <div className="profile-image-placeholder" />
-                <h2 className="profile-username">User1</h2>
+                <h2 className="profile-username">{data.userName}</h2>
                 <div className="profile-buttons">
                     <button className="profile-btn">Bewerken</button>
                     <button className="profile-btn" onClick={handleLogout}>Uitloggen <FaSignOutAlt /></button>
