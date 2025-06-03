@@ -161,5 +161,31 @@ namespace Testen.UnitTesten
 
             _gewichtDataMock.Verify(g => g.DeleteDoelGewicht(id, TestUserId), Times.Once);
         }
+        
+        // ALT FLOWS
+
+        [TestMethod]
+        public async Task GetGewicht_ById_ReturnsNull_WhenNotFound()
+        {
+            int nietBestaandId = 9999;
+
+            _gewichtDataMock.Setup(g => g.GetGewicht(nietBestaandId, TestUserId)).ReturnsAsync((GewichtDetails)null);
+
+            var result = await _gewichtService.GetGewicht(nietBestaandId);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task GetDoelGewicht_ReturnsEmptyList_WhenNoneExist()
+        {
+            _gewichtDataMock.Setup(g => g.GetDoelGewicht(TestUserId)).ReturnsAsync(new List<DoelGewichtDetails>());
+
+            var result = await _gewichtService.GetDoelGewicht();
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+        
     }
 }
