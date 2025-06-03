@@ -32,11 +32,7 @@ jobs:
 
       - name: run test 2
         run: 
-          dotnet test --no-build \
-          --collect:"XPlat Code Coverage" \
-          /p:CollectCoverage=true \
-          /p:CoverletOutput=./coverage/coverage.opencover.xml \
-          /p:CoverletOutputFormat=opencover
+          dotnet test --no-build --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
