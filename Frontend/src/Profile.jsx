@@ -109,7 +109,7 @@ const Profile = () => {
     };
 
     const handleSaveChanges = async () => {
-        let finalImageUrl = data.imageUrl; // huidige profielfoto
+        let finalImageUrl = data.imageUrl;
 
         if (selectedImage) {
             const uploadedUrl = await uploadToCloudinary();
@@ -129,7 +129,7 @@ const Profile = () => {
         }).then(() => {
             toast.success("Gegevens succesvol bijgewerkt!");
             handleCloseEdit();
-            getData(); // vernieuw data op de pagina
+            getData(); 
         }).catch((err) => {
             console.error(err);
             toast.error("Bijwerken mislukt");
