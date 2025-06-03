@@ -415,7 +415,7 @@ const Gewicht = () => {
             })
             .catch((error) => {
                 const errorMessages = error.response?.data?.messages || [
-                    error.response?.data?.message || "Gewicht toevoegen mislukt!",
+                    error.response?.data?.message || "Doelgewicht toevoegen mislukt!",
                 ];
                 errorMessages.forEach((msg) => toast.error(msg));
                 setIsUpdating(false);
@@ -541,7 +541,7 @@ const Gewicht = () => {
                     setAnimationClass("animate__bounceInRight");
                     setIsUpdating(false);
                 } else {
-                    toast.error(`Gewicht bewerken mislukt: ${response.data.message}`);
+                    toast.error(`Doelgewicht bewerken mislukt: ${response.data.message}`);
                     setIsUpdating(false);
                 }
             })
