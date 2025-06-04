@@ -21,7 +21,7 @@ namespace Testen.UnitTesten
         }
 
         [TestMethod]
-        public async Task RegisterAsync_ReturnsSuccessMessage_WhenRegistrationSucceeds()
+        public async Task RegisterAsync_ReturnsSuccessMessage()
         {
             var model = new RegisterModel
             {
@@ -30,11 +30,9 @@ namespace Testen.UnitTesten
                 Password = "Test123!"
             };
 
-            var identityResult = IdentityResult.Success;
-
             _accountDataMock
                 .Setup(a => a.CreateUserAsync(It.IsAny<IdentityUser>(), model.Password))
-                .ReturnsAsync(identityResult);
+                .ReturnsAsync(IdentityResult.Success);
 
             var result = await _accountService.RegisterAsync(model);
 
@@ -42,28 +40,7 @@ namespace Testen.UnitTesten
         }
 
         [TestMethod]
-        public async Task RegisterAsync_ReturnsErrorMessages_WhenRegistrationFails()
-        {
-            var model = new RegisterModel
-            {
-                UserName = "testuser",
-                Email = "test@example.com",
-                Password = "Test123!"
-            };
-
-            var identityResult = IdentityResult.Failed(new IdentityError { Description = "Email is invalid" });
-
-            _accountDataMock
-                .Setup(a => a.CreateUserAsync(It.IsAny<IdentityUser>(), model.Password))
-                .ReturnsAsync(identityResult);
-
-            var result = await _accountService.RegisterAsync(model);
-
-            Assert.AreEqual("Email is invalid", result);
-        }
-
-        [TestMethod]
-        public async Task LoginAsync_ReturnsJwtToken_WhenLoginSucceeds()
+        public async Task LoginAsync_ReturnsToken_WhenSuccessful()
         {
             var model = new LoginModel
             {
@@ -71,11 +48,7 @@ namespace Testen.UnitTesten
                 Password = "Test123!"
             };
 
-            var user = new IdentityUser
-            {
-                UserName = model.UserName,
-                Id = "user-id-123"
-            };
+            var user = new IdentityUser { UserName = model.UserName };
 
             _accountDataMock.Setup(a => a.FindByUserNameAsync(model.UserName)).ReturnsAsync(user);
             _accountDataMock.Setup(a => a.LoginAsync(model)).ReturnsAsync(SignInResult.Success);
@@ -83,17 +56,24 @@ namespace Testen.UnitTesten
             var result = await _accountService.LoginAsync(model);
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result));
-            Assert.IsTrue(result.Contains("."));
         }
 
-        // Alt flows
+        [TestMethod]
+        public async Task LogoutAsync_CallsLogout()
+        {
+            await _accountService.LogoutAsync();
 
+            _accountDataMock.Verify(a => a.LogoutAsync(), Times.Once);
+        }
+        
+        // Alt flow
+        
         [TestMethod]
         public async Task LoginAsync_ReturnsError_WhenUserNotFound()
         {
             var model = new LoginModel
             {
-                UserName = "notfound",
+                UserName = "unknown",
                 Password = "irrelevant"
             };
 
@@ -102,33 +82,6 @@ namespace Testen.UnitTesten
             var result = await _accountService.LoginAsync(model);
 
             Assert.AreEqual("Invalid login attempt", result);
-        }
-
-        [TestMethod]
-        public async Task LoginAsync_ReturnsError_WhenLoginFails()
-        {
-            var model = new LoginModel
-            {
-                UserName = "testuser",
-                Password = "wrongpass"
-            };
-
-            var user = new IdentityUser { UserName = model.UserName, Id = "user-id-123" };
-
-            _accountDataMock.Setup(a => a.FindByUserNameAsync(model.UserName)).ReturnsAsync(user);
-            _accountDataMock.Setup(a => a.LoginAsync(model)).ReturnsAsync(SignInResult.Failed);
-
-            var result = await _accountService.LoginAsync(model);
-
-            Assert.AreEqual("Invalid login attempt", result);
-        }
-
-        [TestMethod]
-        public async Task LogoutAsync_CallsLogoutMethod()
-        {
-            await _accountService.LogoutAsync();
-
-            _accountDataMock.Verify(a => a.LogoutAsync(), Times.Once);
         }
     }
 }

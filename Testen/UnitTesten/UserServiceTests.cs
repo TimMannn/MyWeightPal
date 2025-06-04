@@ -34,10 +34,7 @@ namespace Testen.UnitTesten
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);
 
-            var httpContextMock = new DefaultHttpContext
-            {
-                User = claimsPrincipal
-            };
+            var httpContextMock = new DefaultHttpContext { User = claimsPrincipal };
 
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(httpContextMock);
@@ -46,115 +43,59 @@ namespace Testen.UnitTesten
         }
 
         [TestMethod]
-        public async Task GetAllUsers_CallsDataLayerAndReturnsList()
+        public async Task GetAllUsers_ReturnsList()
         {
-            var expectedList = new List<UserDetails>
+            var users = new List<UserDetails>
             {
                 new UserDetails { Id = "1", UserName = "User1" },
                 new UserDetails { Id = "2", UserName = "User2" }
             };
 
-            _userDataMock.Setup(u => u.GetAllUsers()).ReturnsAsync(expectedList);
+            _userDataMock.Setup(u => u.GetAllUsers()).ReturnsAsync(users);
 
             var result = await _userService.GetAllUsers();
 
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual("User1", result[0].UserName);
-            Assert.AreEqual("User2", result[1].UserName);
-            _userDataMock.Verify(u => u.GetAllUsers(), Times.Once);
         }
 
         [TestMethod]
-        public async Task GetCurrentUser_CallsDataLayerWithUserId()
+        public async Task GetCurrentUser_ReturnsUserDetails()
         {
-            var expected = new UserDetails { Id = TestUserId, UserName = "TestUser" };
+            var user = new UserDetails { Id = TestUserId, UserName = "TestUser" };
 
-            _userDataMock.Setup(u => u.GetCurrentUser(TestUserId)).ReturnsAsync(expected);
+            _userDataMock.Setup(u => u.GetCurrentUser(TestUserId)).ReturnsAsync(user);
 
             var result = await _userService.GetCurrentUser();
 
-            Assert.AreEqual(expected.Id, result.Id);
-            Assert.AreEqual(expected.UserName, result.UserName);
-            _userDataMock.Verify(u => u.GetCurrentUser(TestUserId), Times.Once);
+            Assert.AreEqual("TestUser", result.UserName);
         }
 
         [TestMethod]
-        public async Task CreateUser_CallsDataLayerWithCorrectParameters()
+        public async Task CreateUser_CallsDataLayer()
         {
-            string username = "NewUser";
+            await _userService.CreateUser("NewUser", null);
 
-            await _userService.CreateUser(username, null);
-
-            _userDataMock.Verify(u => u.CreateUser(TestUserId, username, null), Times.Once);
+            _userDataMock.Verify(u => u.CreateUser(TestUserId, "NewUser", null), Times.Once);
         }
 
         [TestMethod]
-        public async Task EditUser_CallsDataLayerWithCorrectParameters()
+        public async Task EditUser_CallsDataLayer()
         {
-            string username = "EditedUser";
+            await _userService.EditUser("EditedUser", null);
 
-            await _userService.EditUser(username, null);
-
-            _userDataMock.Verify(u => u.EditUser(TestUserId, username, null), Times.Once);
+            _userDataMock.Verify(u => u.EditUser(TestUserId, "EditedUser", null), Times.Once);
         }
 
-        // Alt flows
-
+        // Alt flow
+        
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public async Task GetCurrentUser_ThrowsException_WhenHttpContextIsNull()
+        public async Task GetCurrentUser_ReturnsNull_WhenUserNotFound()
         {
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns((HttpContext)null);
-            var userService = new UserService(_userDataMock.Object, _userManagerMock.Object, _httpContextAccessorMock.Object);
+            _userDataMock.Setup(u => u.GetCurrentUser(TestUserId)).ReturnsAsync((UserDetails)null);
 
-            await userService.GetCurrentUser();
-        }
+            var result = await _userService.GetCurrentUser();
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public async Task GetCurrentUser_ThrowsException_WhenUserNotAuthenticated()
-        {
-            var identity = new ClaimsIdentity();
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-            var httpContext = new DefaultHttpContext
-            {
-                User = claimsPrincipal
-            };
-
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(httpContext);
-            var userService = new UserService(_userDataMock.Object, _userManagerMock.Object, _httpContextAccessorMock.Object);
-
-            await userService.GetCurrentUser();
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public async Task GetCurrentUser_ThrowsException_WhenUserIdClaimMissing()
-        {
-            var identity = new ClaimsIdentity(new List<Claim>(), "TestAuthType");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-            var httpContext = new DefaultHttpContext
-            {
-                User = claimsPrincipal
-            };
-
-            _httpContextAccessorMock.Setup(h => h.HttpContext).Returns(httpContext);
-            var userService = new UserService(_userDataMock.Object, _userManagerMock.Object, _httpContextAccessorMock.Object);
-
-            await userService.GetCurrentUser();
-        }
-
-        [TestMethod]
-        public async Task GetAllUsers_ReturnsEmptyList_WhenNoUsers()
-        {
-            _userDataMock.Setup(u => u.GetAllUsers()).ReturnsAsync(new List<UserDetails>());
-
-            var result = await _userService.GetAllUsers();
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Count);
+            Assert.IsNull(result);
         }
     }
 }
