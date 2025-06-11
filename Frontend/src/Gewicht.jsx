@@ -10,8 +10,8 @@ import ReactApexChart from "react-apexcharts";
 import { FaPen } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
-import { FaSignOutAlt } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
+import { FaLightbulb } from "react-icons/fa";
 import Confetti from './Confetti';
 
 
@@ -769,6 +769,7 @@ const Gewicht = () => {
                     <Modal.Title>Nieuw gewicht toevoegen.</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <FaLightbulb /> Gebruik voor decimaal getallen een punt.
                     <Row>
                         <Col>
                             <input
@@ -799,9 +800,10 @@ const Gewicht = () => {
             {/*Pop-up gewicht bewerken*/}
             <Modal show={showEdit} onHide={handleCloseEdit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Gewicht Bewerken</Modal.Title>
+                    <Modal.Title>Gewicht bewerken</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <FaLightbulb /> Gebruik voor decimaal getallen een punt.
                     <Row>
                         <Col>
                             <input
@@ -844,6 +846,7 @@ const Gewicht = () => {
                     <Modal.Title>Nieuw doelgewicht toevoegen.</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <FaLightbulb /> Gebruik voor decimaal getallen een punt.
                     <Row>
                         <Col>
                             <input
@@ -877,6 +880,7 @@ const Gewicht = () => {
                     <Modal.Title>Doelgewicht</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <FaLightbulb /> Gebruik voor decimaal getallen een punt.
                     <Row>
                         <Col>
                             <label>Huidig doel:</label>
@@ -958,7 +962,7 @@ const Gewicht = () => {
                             <input
                                 type="number"
                                 className="form-control"
-                                placeholder="Voer je lengte in (Cm)"
+                                placeholder="Voer je lengte in (cm)"
                                 value={heightCm}
                                 onChange={(e) => setHeightCm(e.target.value)}
                                 min="0"

@@ -109,6 +109,10 @@ const Profile = () => {
     };
 
     const handleSaveChanges = async () => {
+        if (!window.confirm("Let op! Je login gebruikersnaam blijft hetzelfde en zal niet veranderen naar je nieuwe gebruikersnaam. Wil je door gaan?")) {
+            return;
+        }
+        
         let finalImageUrl = data.imageUrl;
 
         if (selectedImage) {
@@ -163,7 +167,7 @@ const Profile = () => {
                 <div className="profile-image-placeholder" />
                 <h2 className="profile-username">{data.userName}</h2>
                 <div className="profile-buttons">
-                    <button className="profile-btn" onClick={handleShowEdit}>Bewerken</button>
+                    <button className="profile-btn" onClick={handleShowEdit}>Profiel bewerken</button>
                     <button className="profile-btn" onClick={handleLogout}>Uitloggen <FaSignOutAlt /></button>
                 </div>
             </div>
