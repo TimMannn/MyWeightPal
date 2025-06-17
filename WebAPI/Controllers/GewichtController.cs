@@ -1,8 +1,12 @@
+using System.Security.Claims;
 using BLL;
 using BLL.Models;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using WebAPI.Hubs;
+
 
 namespace WebAPI.Controllers;
 
@@ -12,11 +16,14 @@ namespace WebAPI.Controllers;
 public class GewichtController : ControllerBase
 {
     private readonly GewichtService _gewichtService;
+    private readonly IHubContext<GewichtHub> _hubContext;
 
-    public GewichtController(GewichtService gewichtservice)
+    public GewichtController(GewichtService gewichtservice, IHubContext<GewichtHub> hubContext)
     {
         _gewichtService = gewichtservice;
+        _hubContext = hubContext;
     }
+
 
     [HttpGet("gewicht")]
     public async Task<ActionResult<IEnumerable<GewichtModel>>> GetGewicht()
@@ -67,6 +74,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.SetGewicht(model.Gewicht);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -96,6 +107,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.EditGewicht(id, model.Gewicht);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -111,6 +126,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.DeleteGewicht(id);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -152,6 +171,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.SetDoelGewicht(model.Doelgewicht);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -181,6 +204,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.EditDoelGewicht(model.Id, model.Doelgewicht, model.Datumbehaald);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -196,6 +223,10 @@ public class GewichtController : ControllerBase
         try
         {
             await _gewichtService.DeleteDoelGewicht(id);
+            
+            var userId = GetUserIdFromContext();
+            await _hubContext.Clients.User(userId).SendAsync("GewichtUpdated");
+            
             return Ok();
         }
         catch (Exception ex)
@@ -203,5 +234,23 @@ public class GewichtController : ControllerBase
             Console.WriteLine($"Error deleting doelgewicht: {ex.Message}");
             return StatusCode(500, "Internal server error");
         }
+    }
+    
+    private string GetUserIdFromContext()
+    {
+        if (HttpContext == null)
+            throw new InvalidOperationException("HttpContext is null");
+
+        var user = HttpContext.User;
+
+        if (user == null || !user.Identity.IsAuthenticated)
+            throw new InvalidOperationException("User not authenticated");
+
+        var userId = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            throw new InvalidOperationException("User ID claim not found");
+
+        return userId;
     }
 }

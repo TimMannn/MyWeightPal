@@ -13,6 +13,7 @@ import { MdDelete } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
 import { FaLightbulb } from "react-icons/fa";
 import Confetti from './Confetti';
+import * as signalR from '@microsoft/signalr';
 
 
 const Gewicht = () => {
@@ -132,6 +133,32 @@ const Gewicht = () => {
     useEffect(() => {
         updateChartData();
     }, [data, dataDoelGewicht]);
+
+    useEffect(() => {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7209/gewichthub", {
+                accessTokenFactory: () => localStorage.getItem("token")
+            })
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start()
+            .then(() => {
+                console.log("SignalR connected");
+                connection.on("GewichtUpdated", () => {
+                    console.log("Gewicht update ontvangen!");
+                    getData();
+                    getDataDoelGewicht();
+                });
+            })
+            .catch(err => {
+                console.error("SignalR start error:", err);
+            });
+
+        return () => {
+            connection.stop();
+        };
+    }, []);
 
     const getData = async () => {
         const token = localStorage.getItem("token");

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
+
 namespace BLL;
 
 public class GewichtService
@@ -34,6 +35,7 @@ public class GewichtService
     {
         var userId = GetUserIdFromContext();
         await _gewichtData.SetGewicht(gewicht, userId);
+        
     }
 
     public async Task EditGewicht(int idGewicht, double gewicht)

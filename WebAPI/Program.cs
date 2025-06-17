@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebAPI.Hubs;
 using IdentityUser = Microsoft.AspNetCore.Identity.IdentityUser;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,19 @@ builder.Services.AddAuthentication(options =>
         };
         options.Events = new JwtBearerEvents
         {
+            OnMessageReceived = context =>
+            {
+                // Laat toe dat SignalR token uit querystring haalt
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/gewichthub"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            },
             OnAuthenticationFailed = context =>
             {
                 Console.WriteLine($"Authentication failed: {context.Exception.Message}");
@@ -67,6 +81,8 @@ builder.Services.AddScoped<IUserData, UserData>();
 builder.Services.AddScoped<GewichtService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<UserService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -103,6 +119,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<GewichtHub>("/gewichthub");
 app.Run();
 
 public partial class Program { }
