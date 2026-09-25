@@ -104,7 +104,6 @@
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/tr/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
-/Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Diagnostics.EventLog.Messages.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/BLL.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/BLL.pdb
@@ -115,7 +114,6 @@
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.AssemblyInfo.cs
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.csproj.CoreCompileInputs.cache
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.sourcelink.json
-/Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.csproj.CopyComplete
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/refint/Testen.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.pdb
@@ -134,3 +132,4 @@
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/Testen/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/timverbakel/RiderProjects/MyWeightPal/Testen/obj/Debug/net8.0/Testen.csproj.Up2Date

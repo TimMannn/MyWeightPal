@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Yb1k2GaAfav2H21HeqxwXhzZtJBGUEMFChZ7/oL7wnbK8rtCfx5gyqMpat2LtdOfKgG744Z4mTkcfyKEHybfuw==",
+  "dgSpecHash": "QQ94YjGFaOQ=",
   "success": true,
   "projectFilePath": "/Users/timverbakel/RiderProjects/MyWeightPal/DAL/DAL.csproj",
   "expectedPackageFiles": [
@@ -57,7 +57,9 @@
     "/Users/timverbakel/.nuget/packages/system.text.encoding.codepages/6.0.0/system.text.encoding.codepages.6.0.0.nupkg.sha512",
     "/Users/timverbakel/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
     "/Users/timverbakel/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
-    "/Users/timverbakel/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512"
+    "/Users/timverbakel/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512",
+    "/Users/timverbakel/.nuget/packages/microsoft.netcore.app.ref/8.0.31/microsoft.netcore.app.ref.8.0.31.nupkg.sha512",
+    "/Users/timverbakel/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.31/microsoft.aspnetcore.app.ref.8.0.31.nupkg.sha512"
   ],
   "logs": []
 }

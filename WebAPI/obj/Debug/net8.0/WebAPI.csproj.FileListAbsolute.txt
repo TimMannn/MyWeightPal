@@ -19,13 +19,7 @@
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/WebAPI.MvcApplicationPartsAssemblyInfo.cache
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets.build.json
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets.development.json
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets/msbuild.WebAPI.Microsoft.AspNetCore.StaticWebAssets.props
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets/msbuild.build.WebAPI.props
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.WebAPI.props
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.WebAPI.props
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets.pack.json
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/scopedcss/bundle/WebAPI.styles.css
-/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/WebAPI.csproj.CopyComplete
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/WebAPI.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/refint/WebAPI.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/WebAPI.pdb
@@ -122,3 +116,12 @@
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/bin/Debug/net8.0/WebAPI.staticwebassets.endpoints.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/rpswa.dswa.cache.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/rjimswa.dswa.cache.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/rjsmrazor.dswa.cache.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets.build.json.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/staticwebassets.build.endpoints.json
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/swae.build.ex.cache
+/Users/timverbakel/RiderProjects/MyWeightPal/WebAPI/obj/Debug/net8.0/WebAPI.csproj.Up2Date
