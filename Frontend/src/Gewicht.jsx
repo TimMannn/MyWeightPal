@@ -682,7 +682,7 @@ const Gewicht = () => {
                     className="logout-btn"
                     onClick={handleShowBMI}
                 >
-                    Bereken BMI ;)
+                    Bereken BMI
                 </Button>
                 
                 <Button
