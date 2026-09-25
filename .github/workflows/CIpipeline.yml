@@ -30,6 +30,12 @@ jobs:
         run: |
           dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=./coverage/coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
